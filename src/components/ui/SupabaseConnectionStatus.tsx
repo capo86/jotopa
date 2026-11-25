@@ -31,9 +31,9 @@ export function SupabaseConnectionStatus() {
     const time = new Intl.DateTimeFormat(DEFAULT_LOCALE, {
       timeStyle: 'medium', timeZone: DEFAULT_TIMEZONE,
     }).format(new Date(connection.data.verifiedAt))
-    message = `Conexión verificada. La API de datos responde y el cliente Supabase pudo consultar Storage con la clave pública. Última comprobación: ${time} (Asunción).`
+    message = `Conexión verificada. Supabase Auth respondió con la clave pública. Última comprobación: ${time} (Asunción).`
   } else {
-    message = 'Configuración pública cargada. Verificá la conexión para comprobar que la API responde.'
+    message = 'Configuración pública cargada. Verificá que Supabase Auth responda.'
   }
 
   return (
