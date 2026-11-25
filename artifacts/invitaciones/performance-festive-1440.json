@@ -1,0 +1,8 @@
+{
+  "template": "festive",
+  "viewport": 1440,
+  "heroVariant": "large",
+  "heroNaturalWidth": 1440,
+  "heroBytes": 149902,
+  "lazyGalleryInitiallyDeferred": true
+}

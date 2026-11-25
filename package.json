@@ -1,0 +1,73 @@
+{
+  "name": "jotopa",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "overrides": {
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
+  },
+  "engines": {
+    "node": ">=24.18.0 <25",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit && npm run typecheck:edge",
+    "typecheck:edge": "npm exec --yes --package=deno@2.9.6 -- deno check --no-config supabase/functions/invite-member/index.ts supabase/functions/invitation-assets/index.ts supabase/functions/wall-media/index.ts",
+    "test": "node --experimental-strip-types --test src/lib/supabase-connection.test.ts src/features/auth/auth.test.ts src/features/events/events.test.ts src/features/guests/guests.test.ts src/features/rsvp/rsvp.test.ts src/features/invitations/invitations.test.ts src/features/invitation-design/design.test.ts src/features/invitation-design/information.test.ts supabase/functions/invite-member/handler.test.ts src/features/info/attendance.test.ts src/features/wall/wall.test.ts src/features/wall/feed.test.ts src/features/wall/presentation.test.ts",
+    "test:auth": "node --test scripts/auth.integration.test.mjs",
+    "test:rls": "node scripts/test-rls.mjs",
+    "test:e2e": "playwright test",
+    "test:events": "node --experimental-strip-types --test scripts/events.integration.test.mjs",
+    "test:guests": "node --test scripts/guests.integration.test.mjs",
+    "test:rsvp": "node --test scripts/rsvp.integration.test.mjs",
+    "test:invitations": "node --test scripts/invitations.integration.test.mjs",
+    "test:design": "node --test scripts/design.integration.test.mjs",
+    "functions:serve": "supabase functions serve --env-file supabase/functions/.env.local",
+    "test:information": "node --test scripts/information.integration.test.mjs",
+    "test:seating": "node --test scripts/seating.integration.test.mjs",
+    "test:wall": "node --experimental-strip-types --test scripts/wall.integration.test.mjs",
+    "test:projection": "node --experimental-strip-types --test scripts/projection.integration.test.mjs",
+    "test:presentation": "playwright test --config playwright.presentation.config.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.119.2",
+    "@tanstack/react-query": "5.108.2",
+    "exceljs": "4.4.0",
+    "libphonenumber-js": "1.13.17",
+    "qrcode": "1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-hook-form": "7.92.0",
+    "react-router": "8.5.2",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
+    "@tailwindcss/vite": "4.3.5",
+    "@types/node": "24.19.2",
+    "@types/pngjs": "6.0.5",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "@zxing/library": "0.23.0",
+    "eslint": "10.15.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.8",
+    "globals": "17.14.0",
+    "pngjs": "7.0.0",
+    "supabase": "3.2.0",
+    "tailwindcss": "4.3.5",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.73.0",
+    "vercel": "66.6.0",
+    "vite": "8.3.8"
+  }
+}

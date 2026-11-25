@@ -1,0 +1,10 @@
+{
+  "mode": "UI aislada con respuestas simuladas; no valida Supabase, RLS ni Storage real",
+  "width": 360,
+  "history": 150,
+  "initialProgressiveReads": 7,
+  "joins": 2,
+  "photoRequests": 1,
+  "signatures": 3,
+  "checks": "history, media, presentation, reconnect, removal and unavailable state"
+}

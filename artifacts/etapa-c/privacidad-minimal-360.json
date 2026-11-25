@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-11-24T03:18:57.769Z",
+  "template": "minimal",
+  "width": 360,
+  "document_policy": "no-referrer",
+  "local_fonts_loaded": true,
+  "observed": {
+    "requests": 100,
+    "fonts": 2,
+    "stylesheets": 1,
+    "scripts": 84,
+    "images": 1,
+    "referrerLeak": false,
+    "foreignLeak": false,
+    "unexpectedThirdParty": false,
+    "inspectionErrors": 0,
+    "consoleLeak": false
+  },
+  "collector_paths": [
+    "/probe.js",
+    "/probe.css",
+    "/probe-fetch",
+    "/probe.png",
+    "/probe-font.woff2",
+    "/navigation"
+  ],
+  "negative_control_detected": true,
+  "personal_token_in_referer": false
+}

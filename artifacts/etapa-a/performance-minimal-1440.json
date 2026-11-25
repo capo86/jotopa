@@ -1,0 +1,41 @@
+{
+  "template": "minimal",
+  "viewport": 1440,
+  "photos": [
+    {
+      "variant": "large.webp",
+      "naturalWidth": 1440,
+      "bytes": 191894,
+      "loading": "eager",
+      "priority": "high"
+    },
+    {
+      "variant": "large.webp",
+      "naturalWidth": 648,
+      "bytes": 344778,
+      "loading": "lazy",
+      "priority": "auto"
+    },
+    {
+      "variant": "small.webp",
+      "naturalWidth": 648,
+      "bytes": 47110,
+      "loading": "lazy",
+      "priority": "auto"
+    },
+    {
+      "variant": "large.webp",
+      "naturalWidth": 648,
+      "bytes": 344778,
+      "loading": "lazy",
+      "priority": "auto"
+    },
+    {
+      "variant": "small.webp",
+      "naturalWidth": 648,
+      "bytes": 47110,
+      "loading": "lazy",
+      "priority": "auto"
+    }
+  ]
+}

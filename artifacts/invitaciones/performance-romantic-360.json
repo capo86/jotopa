@@ -1,0 +1,8 @@
+{
+  "template": "romantic",
+  "viewport": 360,
+  "heroVariant": "small",
+  "heroNaturalWidth": 360,
+  "heroBytes": 93704,
+  "lazyGalleryInitiallyDeferred": true
+}

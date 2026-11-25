@@ -1,0 +1,4 @@
+/* External stylesheet: its no-referrer response policy also covers font fetches.
+   Inline styles inserted by development CSS modules can ignore that policy. */
+@font-face{font-family:InvitationManrope;src:url('/fonts/manrope-latin.woff2') format('woff2');font-style:normal;font-weight:400 800;font-display:swap}
+@font-face{font-family:InvitationCormorant;src:url('/fonts/cormorant-latin.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}

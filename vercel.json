@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "headers": [{ "source": "/i/(.*)", "headers": [
+    { "key": "Cache-Control", "value": "private, no-store" },
+    { "key": "Referrer-Policy", "value": "no-referrer" },
+    { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+  ] }, { "source": "/e/(.*)/pantalla", "headers": [
+    { "key": "Cache-Control", "value": "private, no-store" },
+    { "key": "Referrer-Policy", "value": "no-referrer" },
+    { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+  ] }, { "source": "/fonts/(.*)", "headers": [
+    { "key": "Referrer-Policy", "value": "no-referrer" }
+  ] }],
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+

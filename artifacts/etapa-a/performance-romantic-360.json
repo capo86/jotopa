@@ -1,0 +1,41 @@
+{
+  "template": "romantic",
+  "viewport": 360,
+  "photos": [
+    {
+      "variant": "small.webp",
+      "naturalWidth": 360,
+      "bytes": 93704,
+      "loading": "eager",
+      "priority": "high"
+    },
+    {
+      "variant": "small.webp",
+      "naturalWidth": 324,
+      "bytes": 93704,
+      "loading": "lazy",
+      "priority": "auto"
+    },
+    {
+      "variant": "small.webp",
+      "naturalWidth": 324,
+      "bytes": 47110,
+      "loading": "lazy",
+      "priority": "auto"
+    },
+    {
+      "variant": "small.webp",
+      "naturalWidth": 324,
+      "bytes": 93704,
+      "loading": "lazy",
+      "priority": "auto"
+    },
+    {
+      "variant": "small.webp",
+      "naturalWidth": 324,
+      "bytes": 47110,
+      "loading": "lazy",
+      "priority": "auto"
+    }
+  ]
+}

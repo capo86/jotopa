@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Aptos", "Segoe UI", sans-serif;
+  --font-display: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --color-canvas: #f6f5ef;
+  --color-paper: #fdfcf8;
+  --color-forest: #244c40;
+  --color-clay: #a64933;
+  --color-muted: #656d62;
+  --color-line: #e2e3d8;
+  --color-sand: #cbcebc;
+  --animate-arrive: arrive 600ms ease-out both;
+}
+
+@layer base {
+  body { margin: 0; min-width: 320px; background: var(--color-canvas); color: #303b32; }
+  ::selection { background: #d8e1c5; color: var(--color-forest); }
+  :focus-visible { outline: 2px solid var(--color-clay); outline-offset: 5px; }
+  a, button, summary { -webkit-tap-highlight-color: transparent; }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  code { overflow-wrap: anywhere; font-size: .85em; }
+}
+
+@layer components {
+  .form-input { display: block; width: 100%; min-height: 46px; border: 1px solid var(--color-sand); border-radius: .5rem; background: var(--color-paper); padding: .7rem .8rem; font-size: 1rem; color: var(--color-forest); }
+  .form-input[aria-invalid="true"] { border-color: var(--color-clay); }
+  .nav-link { display: flex; flex: 1; align-items: center; justify-content: center; gap: .5rem; border-radius: .5rem; padding: .8rem .5rem; font-size: .75rem; color: var(--color-muted); transition: background 150ms, color 150ms; }
+  .nav-link:hover { background: #eeeee4; color: var(--color-forest); }
+  .nav-link-active { background: #e8ecdf; color: var(--color-forest); font-weight: 600; }
+  .button-primary { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: .85rem; border-radius: .5rem; background: var(--color-forest); padding: .8rem 1.2rem; color: var(--color-paper); font-size: .8rem; font-weight: 500; transition: background 150ms, transform 150ms; }
+  .button-primary:hover { background: #173c30; transform: translateY(-1px); }
+  .eyebrow { color: var(--color-muted); font-size: .65rem; font-weight: 600; letter-spacing: .16em; }
+  .step-number { font-family: var(--font-display); color: var(--color-clay); font-size: 1.6rem; font-style: italic; }
+  .setting-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1.5rem; padding-block: 1.3rem; font-size: .85rem; }
+  .setting-row dt { color: var(--color-muted); }
+  .setting-row dd { color: var(--color-forest); }
+}
+
+.brand-mark { position: relative; display: inline-block; width: 29px; height: 32px; }
+.brand-mark span { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: var(--color-forest); }
+.brand-mark span:first-child { left: 0; top: 0; }
+.brand-mark span:last-child { right: 0; bottom: 0; opacity: .65; }
+.gathering-print { position: relative; display: flex; min-height: 350px; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #d9dcc7; border-radius: 50% 50% 8px 8px / 42% 42% 8px 8px; background-color: #e8ecd9; background-image: radial-gradient(#adb69555 .6px, transparent .6px); background-size: 5px 5px; color: var(--color-forest); text-align: center; animation-delay: 100ms; }
+.print-edition { margin-top: 22px; font-size: .55rem; letter-spacing: .15em; }
+.print-caption { margin-block: 25px 22px; font-size: .5rem; letter-spacing: .2em; }
+.meeting-shapes { position: relative; width: 200px; height: 135px; margin-top: 17px; }
+.meeting-shapes span { position: absolute; top: 8px; width: 93px; height: 118px; border-radius: 48px 48px 8px 8px; }
+.meeting-shapes span:first-child { left: 22px; transform: rotate(-19deg); background: #a64f38; }
+.meeting-shapes span:nth-child(2) { right: 22px; transform: rotate(19deg); background: #c5cf9f; mix-blend-mode: multiply; }
+.meeting-shapes i { position: absolute; left: 87px; top: 37px; color: #f7f5e7; font-size: 45px; font-style: normal; line-height: 1; }
+.skip-link { position: fixed; top: -100px; left: 1rem; z-index: 50; border-radius: .5rem; background: var(--color-forest); padding: 1rem; color: white; }
+.skip-link:focus-visible { top: 1rem; }
+.invitation-cover { background-color: #e8ecd9; background-image: radial-gradient(#adb69555 .6px, transparent .6px); background-size: 5px 5px; }
+
+@keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 1024px) { .nav-link { flex: initial; justify-content: flex-start; gap: .75rem; padding: .85rem .8rem; font-size: .85rem; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

@@ -1,0 +1,12 @@
+{
+  "checked_at": "2026-11-25T13:20:34.710Z",
+  "width": 360,
+  "source": "Chrome y Supabase Local reales",
+  "document_policy": "no-referrer",
+  "network": {
+    "requests": 88,
+    "unexpectedThirdParty": false,
+    "inspectionErrors": 0
+  },
+  "personal_or_projection_token_in_referer": false
+}

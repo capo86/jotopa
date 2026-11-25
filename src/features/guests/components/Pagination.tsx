@@ -1,0 +1,4 @@
+export function Pagination({ page, total, onChange, busy = false }: { page: number; total: number; onChange: (page: number) => void; busy?: boolean }) {
+  const pages = Math.max(1, Math.ceil(total / 25))
+  return <nav aria-label="Paginación de invitados" className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-sm"><span aria-live="polite">Página {page + 1} de {pages} · {total} {total === 1 ? 'persona' : 'personas'}</span><div className="flex gap-3"><button type="button" disabled={page === 0 || busy} className="min-h-11 rounded-lg border border-line px-4" onClick={() => onChange(page - 1)}>Anterior</button><button type="button" disabled={page + 1 >= pages || busy} className="min-h-11 rounded-lg border border-line px-4" onClick={() => onChange(page + 1)}>Siguiente</button></div></nav>
+}
