@@ -20,7 +20,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
         {supabase ? <AuthForm mode={mode} /> : <p role="alert" className="text-sm leading-6 text-clay">La conexión no está configurada. Revisá <Link to="/configuracion" className="underline">la configuración de Jotopa</Link>.</p>}
       </div>
       <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm text-forest">
-        {mode === 'login' ? <><Link to="/registro" state={location.state} className="underline underline-offset-4">Crear una cuenta</Link><Link to="/recuperar-contrasena" className="underline underline-offset-4">Olvidé mi contraseña</Link></> : <Link to="/iniciar-sesion" state={location.state} className="underline underline-offset-4">Volver a iniciar sesión</Link>}
+        {mode === 'login' ? <Link to="/recuperar-contrasena" className="underline underline-offset-4">Olvidé mi contraseña</Link> : <Link to="/iniciar-sesion" state={location.state} className="underline underline-offset-4">Volver a iniciar sesión</Link>}
       </div>
     </section>
   )
