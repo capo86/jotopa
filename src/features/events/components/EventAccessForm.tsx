@@ -6,6 +6,7 @@ import {requireSupabase} from '../../../lib/supabase'
 import {eventErrorMessage} from '../../../lib/event-errors'
 import {InputField} from '../../../components/ui/InputField'
 import {localDateTime,utcDateTime} from '../dates'
+import Clock3 from 'lucide-react/icons/clock-3'
 
 const accessSchema=z.object({opensAt:z.string().min(1,'Ingresá una fecha de apertura.'),closesAt:z.string().min(1,'Ingresá una fecha de cierre.')})
 type Values=z.infer<typeof accessSchema>
@@ -16,7 +17,7 @@ export function EventAccessForm({event}:{event:Tables<'events'>}) {
     const {error}=await requireSupabase().rpc('configure_event_access',{p_event_id:event.id,p_opens_at:utcDateTime(values.opensAt,event.timezone),p_closes_at:utcDateTime(values.closesAt,event.timezone)})
     if(error) throw error
   },onSuccess:async()=>{await cache.invalidateQueries({queryKey:['event',event.id]})}})
-  return <details className="mt-8 rounded-xl border border-line bg-paper p-5 sm:p-7"><summary className="cursor-pointer font-medium text-forest">Acceso a las invitaciones personales</summary><p className="mt-4 text-sm leading-7 text-muted">Solo funcionan con el evento Activo y entre estas fechas. El plazo RSVP se configura al editar el evento; después de ese plazo podrán consultar su invitación y pedir la baja de recordatorios mientras el acceso siga abierto.</p><form noValidate className="mt-5" onSubmit={handleSubmit(values=>{
+  return <details className="mt-5 rounded-2xl border border-line bg-paper p-5 sm:p-7"><summary className="flex min-h-11 cursor-pointer items-center gap-3 font-medium text-forest"><span className="rounded-xl bg-[#edf1e5] p-3"><Clock3 size={19} aria-hidden="true" /></span>Acceso a las invitaciones personales <span aria-hidden="true" className="ml-auto text-muted">⌄</span></summary><p className="mt-4 max-w-2xl text-sm leading-7 text-muted">Solo funcionan con el evento Activo y entre estas fechas. El plazo RSVP se configura al editar el evento; después de ese plazo podrán consultar su invitación y pedir la baja de recordatorios mientras el acceso siga abierto.</p><form noValidate className="mt-5" onSubmit={handleSubmit(values=>{
     clearErrors();const parsed=accessSchema.safeParse(values)
     if(!parsed.success){for(const issue of parsed.error.issues) setError(issue.path[0] as keyof Values,{message:issue.message});return}
     try {const opens=utcDateTime(values.opensAt,event.timezone),closes=utcDateTime(values.closesAt,event.timezone);if(closes<=opens){setError('closesAt',{message:'El cierre debe ser posterior a la apertura.'});return}}
