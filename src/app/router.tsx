@@ -17,12 +17,12 @@ export const router = createBrowserRouter([
         { index: true, lazy: () => import('../pages/HomePage') },
         { path: 'configuracion', lazy: () => import('../pages/SettingsPage') },
         { path: 'iniciar-sesion', lazy: () => import('../features/auth/pages/LoginPage') },
-        { path: 'registro', lazy: () => import('../features/auth/pages/RegisterPage') },
         { path: 'recuperar-contrasena', lazy: () => import('../features/auth/pages/RecoverPasswordPage') },
         { path: 'restablecer-contrasena', lazy: () => import('../features/auth/pages/ResetPasswordPage') },
         { path: 'equipo/aceptar', lazy: () => import('../features/members/pages/AcceptInvitePage') },
         { Component: RequireAuth, children: [
           { path: 'perfil', lazy: () => import('../features/auth/pages/ProfilePage') },
+          { path: 'paneladmin/usuarios', lazy: () => import('../features/auth/pages/AdminUsersPage') },
           { path: 'eventos', lazy: () => import('../features/events/pages/EventsPage') },
           { path: 'eventos/nuevo', lazy: () => import('../features/events/pages/CreateEventPage') },
           { path: 'eventos/:eventId', lazy: () => import('../features/events/pages/EventDetailsPage') },

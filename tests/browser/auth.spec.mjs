@@ -18,7 +18,7 @@ async function recoveryLink(email) {
   throw new Error('No llegó el mensaje de recuperación a Mailpit local.')
 }
 
-test('real registration, profile, session persistence, logout, login and password recovery', async ({ page }) => {
+test('private access, profile, session persistence, logout, login and password recovery', async ({ page }) => {
   const email = `jotopa-browser-${randomUUID()}@example.test`
   const password = `BrowserPass42-${randomUUID()}`
   const newPassword = `UpdatedPass42-${randomUUID()}`
@@ -35,16 +35,15 @@ test('real registration, profile, session persistence, logout, login and passwor
     await page.goto('/restablecer-contrasena')
     await expect(page.getByRole('heading', { name: 'Necesitás un enlace válido.' })).toBeVisible()
 
-    await page.goto('/registro')
-    await page.getByLabel('Nombre completo', { exact: true }).fill('Anfitriona de prueba')
+    const created = await account.auth.signUp({ email, password, options: { data: { full_name: 'Anfitriona de prueba' } } })
+    if (created.data.user) ids.push(created.data.user.id)
+    expect(Boolean(created.error)).toBe(false)
+    await page.goto('/iniciar-sesion')
+    await expect(page.locator('a[href="/registro"]')).toHaveCount(0)
     await page.getByLabel('Correo electrónico', { exact: true }).fill(email)
     await page.getByLabel('Contraseña', { exact: true }).fill(password)
-    await page.getByLabel('Repetir contraseña', { exact: true }).fill(password)
-    await page.getByRole('button', { name: 'Crear mi cuenta', exact: true }).click()
+    await page.getByRole('button', { name: 'Iniciar sesión', exact: true }).click()
     await expect(page).toHaveURL(/\/perfil$/)
-    const signedIn = await account.auth.signInWithPassword({ email, password })
-    if (signedIn.data.user) ids.push(signedIn.data.user.id)
-    expect(Boolean(signedIn.error)).toBe(false)
     await expect(page.getByText('Organizador', { exact: true })).toBeVisible()
     await page.reload()
     await expect(page.getByLabel('Nombre completo', { exact: true })).toHaveValue('Anfitriona de prueba')
@@ -112,7 +111,7 @@ test('real registration, profile, session persistence, logout, login and passwor
 test('public forms remain usable at 360px and 1440px', async ({ page }) => {
   for (const width of [360, 1440]) {
     await page.setViewportSize({ width, height: 900 })
-    for (const route of ['/iniciar-sesion', '/registro', '/recuperar-contrasena']) {
+    for (const route of ['/iniciar-sesion', '/recuperar-contrasena']) {
       await page.goto(route)
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
       await expect(page.locator('form')).toBeVisible()

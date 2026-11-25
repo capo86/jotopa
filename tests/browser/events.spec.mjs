@@ -33,7 +33,6 @@ for (const width of [360, 1440]) test(`real event and team lifecycle at ${width}
   try {
     for (const name of ['Anfitrión de prueba', 'Colaborador de prueba']) {
       const sdk = client(), email = `jotopa-team-browser-${randomUUID()}@example.test`
-      if (width === 1440 && name === 'Colaborador de prueba') { accounts.push({ sdk, email, id: null }); continue }
       const result = await sdk.auth.signUp({ email, password, options: { data: { full_name: name } } })
       if (result.data.user) accounts.push({ sdk, email, id: result.data.user.id })
       expect(Boolean(result.error)).toBe(false)
@@ -76,18 +75,11 @@ for (const width of [360, 1440]) test(`real event and team lifecycle at ${width}
     const message = await teamMail(accounts[1].email); messageId = message.id
     try { await collaborator.goto(message.link) } catch { throw new Error('No se pudo abrir la invitación local.') }
     await expect(collaborator.getByRole('heading', { name: 'Te invitaron a colaborar.', exact: true })).toBeVisible()
-    await collaborator.locator('main').getByRole('link', { name: width === 1440 ? 'Crear cuenta' : 'Iniciar sesión', exact: true }).click()
-    if (width === 1440) await collaborator.getByLabel('Nombre completo', { exact: true }).fill('Colaborador de prueba')
+    await collaborator.locator('main').getByRole('link', { name: 'Iniciar sesión', exact: true }).click()
     await collaborator.getByLabel('Correo electrónico', { exact: true }).fill(accounts[1].email)
     await collaborator.getByLabel('Contraseña', { exact: true }).fill(password)
-    if (width === 1440) await collaborator.getByLabel('Repetir contraseña', { exact: true }).fill(password)
-    await collaborator.getByRole('button', { name: width === 1440 ? 'Crear mi cuenta' : 'Iniciar sesión', exact: true }).click()
+    await collaborator.getByRole('button', { name: 'Iniciar sesión', exact: true }).click()
     await expect(collaborator.getByRole('button', { name: 'Aceptar invitación', exact: true })).toBeVisible()
-    if (width === 1440) {
-      const registered = await accounts[1].sdk.auth.signInWithPassword({ email: accounts[1].email, password })
-      accounts[1].id = registered.data.user?.id ?? null
-      expect(Boolean(accounts[1].id)).toBe(true)
-    }
     expect(new URL(collaborator.url()).hash).toBe('')
     await expect(collaborator.getByText('Contenido', { exact: true })).toBeVisible()
     await collaborator.getByRole('button', { name: 'Aceptar invitación', exact: true }).click()

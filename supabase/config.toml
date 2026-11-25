@@ -442,3 +442,7 @@ verify_jwt = false
 # Guest uploads/signing validate the bearer invitation in SQL. Purging verifies
 # a real Auth JWT and wall.moderate; private server credentials never reach React.
 verify_jwt = false
+
+[functions.create-event-user]
+# The handler validates the caller's real Auth session and platform role.
+verify_jwt = false

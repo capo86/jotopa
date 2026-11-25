@@ -1,4 +1,4 @@
-﻿
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -376,6 +376,9 @@ isOneToOne: false
             "accept_event_member_invite":
 { Args: { "p_token": string }; Returns: string
                            },
+"admin_add_event_member":
+{ Args: { "p_event_id": string,"p_role": Database["public"]['Enums']["event_role"],"p_user_id": string }; Returns: undefined
+                           },
 "apply_guest_import":
 { Args: { "p_event_id": string,"p_rows": Json }; Returns: Json
                            },
@@ -531,6 +534,9 @@ isOneToOne: false
                            },
 "remove_invitation_asset":
 { Args: { "p_asset_id": string,"p_event_id": string }; Returns: undefined
+                           },
+"reserve_admin_user_creation":
+{ Args: Record<PropertyKey, never>; Returns: boolean
                            },
 "reserve_invitation_asset":
 { Args: { "p_alt": string,"p_event_id": string }; Returns: string

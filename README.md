@@ -2,7 +2,7 @@
 
 Jotopa significa **encuentro** en guaraní: un servicio de invitaciones digitales, convocatoria y encuentros. Interfaz en español de Paraguay, zona horaria predeterminada `America/Asuncion` y fechas de base de datos en UTC. Las Fases 1A, 1B, 2A, 2B, 3A y las Etapas A y B se conservan. La **Etapa C** incorpora buenos deseos multimedia y moderación. La **Etapa D** agrega conversación en tiempo real y proyección horizontal con historial completo. El desarrollo se detiene después de D para revisión; administración privada (E) y panel/recordatorios (F) siguen pendientes.
 
-La administración comercial privada es el destino del producto, pero **todavía no está implementada**: siguen habilitados el registro y la creación de eventos con los permisos anteriores. Su cierre y `/paneladmin` corresponden a E. El RSVP actual solo acepta Sí/No; las respuestas Quizás anteriores se conservan en historial y archivo privado y pasan a pendientes, sin convertirse en confirmaciones. No se desplegó el servicio.
+La creación de usuarios en la nube está reservada al administrador de plataforma y el registro público está deshabilitado. El acceso para crear miembros está en **Mi perfil → Administrar usuarios** (`/paneladmin/usuarios`). La restricción de creación de eventos a administradores y el resto de la administración privada siguen pendientes. El RSVP actual solo acepta Sí/No; las respuestas Quizás anteriores se conservan en historial y archivo privado y pasan a pendientes, sin convertirse en confirmaciones.
 
 **Revisión actual — 25 de noviembre de 2026:** ampliación y verificación de la Etapa D desde el código existente, conservando el cierre de privacidad de C. Se completa el modo presentación, apariencia, lectura desde distancia, movimiento continuo y controles del operador; se verifican privacidad, permisos y regresiones. No se inicia E.
 
@@ -34,9 +34,17 @@ La clave publicable se obtuvo del campo `PUBLISHABLE_KEY` de la salida JSON de l
 
 ## Autenticación y perfiles
 
-Rutas públicas: `/`, `/configuracion`, `/registro`, `/iniciar-sesion`, `/recuperar-contrasena`, `/restablecer-contrasena`, `/equipo/aceptar` y `/i/:token`. Esta última permite acceder a una invitación personal sin cuenta. Las rutas de perfil, listado/creación/detalle/edición de eventos y equipo requieren sesión. El equipo requiere además permisos de gestión; la edición requiere `event.update`.
+### Creación privada de miembros
 
-El registro usa correo y contraseña. Se exigen al menos 10 caracteres, una mayúscula, una minúscula y un número, tanto en el formulario como en Supabase Auth. La configuración local conserva la confirmación de correo desactivada, por lo que un registro correcto inicia sesión directamente. El frontend también contempla la respuesta sin sesión para cuando se habilite confirmación de correo.
+El administrador de plataforma puede crear una cuenta y asociarla a un evento existente con uno de los siete roles. La cuenta se crea en Supabase Auth, el trigger existente crea su perfil `organizer` y la RPC `admin_add_event_member` vincula ese perfil al evento y registra la acción en auditoría. La contraseña inicial se establece en el formulario y no se guarda en tablas de Jotopa ni se envía por correo automáticamente; debe compartirse de manera segura. Si el correo ya existe se rechaza la creación; la incorporación de cuentas existentes sigue usando las invitaciones de equipo.
+
+La Edge Function `create-event-user` verifica la sesión real, el rol `super_admin`, el evento, los datos y un límite de 20 intentos por administrador por hora. Solo la función usa credenciales privilegiadas, que nunca llegan a React. Si falla la vinculación después de crear una cuenta, intenta retirarla; si la limpieza falla informa que debe revisarse la cuenta en Supabase. Las migraciones `20261125230000_admin_add_event_member.sql` y `20261125231000_admin_user_creation_limit.sql` conservan RLS y privilegios explícitos.
+
+En Supabase Cloud el registro público está deshabilitado en Auth, no solamente oculto en la interfaz. El entorno local conserva el registro habilitado para las suites históricas de fixtures; no representa la configuración de producción. La función usa `APP_URL` para autorizar el origen de producción. Las pruebas de la función y de la UI usan únicamente Supabase Local y datos temporales; requieren la API local, la función servida y un servidor Vite local en el puerto 5176. El script `scripts/admin-users.integration.test.mjs` rechaza destinos que no sean Supabase Local mediante el auxiliar compartido.
+
+Rutas públicas: `/`, `/configuracion`, `/iniciar-sesion`, `/recuperar-contrasena`, `/restablecer-contrasena`, `/equipo/aceptar` y `/i/:token`. Esta última permite acceder a una invitación personal sin cuenta. Las rutas de perfil, listado/creación/detalle/edición de eventos y equipo requieren sesión. El equipo requiere además permisos de gestión; la edición requiere `event.update`.
+
+El administrador crea cuentas con correo y contraseña. El formulario exige al menos 10 caracteres, una mayúscula, una minúscula y un número; la misma validación se aplica en la función de servidor. La configuración local mantiene registro habilitado para fixtures. En producción el registro público está deshabilitado y las cuentas creadas por el administrador quedan confirmadas.
 
 El cliente persistente de Supabase restaura la sesión al recargar, renueva tokens y notifica cambios al proveedor de Auth. Las consultas y mutaciones remotas pasan por TanStack Query. Al cambiar de usuario o cerrar sesión se limpia la caché. Cerrar sesión afecta el navegador actual. Las rutas protegidas esperan la restauración antes de redirigir al acceso; RLS sigue siendo la barrera de seguridad real.
 
