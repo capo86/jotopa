@@ -1,12 +1,7 @@
 import { z } from 'zod'
-import { createClient } from '@supabase/supabase-js'
 import type { SupabaseConfig } from './supabase-config'
 
-const apiDescriptionSchema = z.object({
-  swagger: z.literal('2.0'),
-  info: z.object({ title: z.string() }),
-  paths: z.record(z.string(), z.unknown()),
-})
+const authSettingsSchema = z.object({ external: z.record(z.string(), z.unknown()) })
 
 type ConnectionErrorCode = 'configuration' | 'credentials' | 'unavailable' | 'response' | 'network' | 'timeout'
 
@@ -29,8 +24,8 @@ export class SupabaseConnectionError extends Error {
   }
 }
 
-// The SDK has no public method for the REST API root. This diagnostic checks
-// PostgREST without inventing a table, calling Auth or changing database data.
+// Auth settings is a read-only public endpoint that validates publishable keys
+// in both hosted and local Supabase without requiring privileged access.
 export async function verifySupabaseConnection(
   config: SupabaseConfig | null,
   signal: AbortSignal,
@@ -41,9 +36,9 @@ export async function verifySupabaseConnection(
   const timeoutSignal = AbortSignal.timeout(8000)
   const requestSignal = AbortSignal.any([signal, timeoutSignal])
   try {
-    const response = await request(`${config.url.replace(/\/$/, '')}/rest/v1/`, {
+    const response = await request(`${config.url.replace(/\/$/, '')}/auth/v1/settings`, {
       method: 'GET',
-      headers: { apikey: config.publicKey, Accept: 'application/openapi+json' },
+      headers: { apikey: config.publicKey, Accept: 'application/json' },
       cache: 'no-store',
       credentials: 'omit',
       redirect: 'error',
@@ -53,30 +48,7 @@ export async function verifySupabaseConnection(
     if (!response.ok) throw new SupabaseConnectionError('unavailable')
 
     const body: unknown = await response.json()
-    if (!apiDescriptionSchema.safeParse(body).success) throw new SupabaseConnectionError('response')
-
-    // The REST root is public locally, even for an invalid key. Verify the
-    // actual SDK separately against Storage, which rejects invalid keys.
-    // accessToken disables Auth initialization for this short-lived probe.
-    let sdkStatus: number | undefined
-    const diagnosticClient = createClient(config.url, config.publicKey, {
-      accessToken: async () => null,
-      global: {
-        fetch: async (input, init) => {
-          const sdkResponse = await request(input, {
-            ...init, signal: requestSignal, cache: 'no-store', credentials: 'omit', redirect: 'error',
-          })
-          sdkStatus = sdkResponse.status
-          return sdkResponse
-        },
-      },
-    })
-    const { data, error } = await diagnosticClient.storage.listBuckets()
-    requestSignal.throwIfAborted()
-    if (sdkStatus === undefined) throw new SupabaseConnectionError('network')
-    if ([400, 401, 403].includes(sdkStatus)) throw new SupabaseConnectionError('credentials')
-    if (sdkStatus >= 400) throw new SupabaseConnectionError('unavailable')
-    if (error || !Array.isArray(data)) throw new SupabaseConnectionError('response')
+    if (!authSettingsSchema.safeParse(body).success) throw new SupabaseConnectionError('response')
 
     return { verifiedAt: new Date().toISOString() }
   } catch (error) {

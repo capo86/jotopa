@@ -6,7 +6,7 @@ import { SupabaseConnectionError, verifySupabaseConnection } from './supabase-co
 // Synthetic fixtures are only used by mocked requests; no real keys are loaded.
 const config = { url: 'http://127.0.0.1:54321', publicKey: 'sb_publishable_test_fixture' }
 const signal = () => new AbortController().signal
-const description = { swagger: '2.0', info: { title: 'PostgREST API' }, paths: {} }
+const description = { external: { email: true } }
 const errorWithCode = (code: string) => (error: unknown) => error instanceof SupabaseConnectionError && error.code === code
 const legacyKey = (role: string) => `header.${Buffer.from(JSON.stringify({ role })).toString('base64url')}.signature`
 
@@ -26,32 +26,22 @@ test('secret keys, service role JWTs and malformed keys are rejected', () => {
   }
 })
 
-test('connection checks REST and the actual Storage SDK with read-only requests', async () => {
+test('connection checks the public Auth endpoint with a read-only request', async () => {
   let calls = 0
   const request: typeof fetch = async (input, init) => {
     calls += 1
-    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
-    assert.ok([`${config.url}/rest/v1/`, `${config.url}/storage/v1/bucket`].includes(url))
+    assert.equal(String(input), `${config.url}/auth/v1/settings`)
     assert.equal(init?.method, 'GET')
     assert.equal(init?.cache, 'no-store')
     assert.equal(init?.credentials, 'omit')
     assert.equal(init?.redirect, 'error')
-    const headers = new Headers(init?.headers)
-    assert.equal(headers.get('apikey'), config.publicKey)
-    if (url.endsWith('/rest/v1/')) assert.equal(headers.get('Authorization'), null)
-    return Response.json(url.endsWith('/rest/v1/') ? description : [])
+    assert.equal(new Headers(init?.headers).get('apikey'), config.publicKey)
+    return Response.json(description)
   }
   const result = await verifySupabaseConnection(config, signal(), request)
-  assert.equal(calls, 2)
+  assert.equal(calls, 1)
   assert.ok(Number.isFinite(Date.parse(result.verifiedAt)))
   assert.deepEqual(Object.keys(result), ['verifiedAt'])
-})
-
-test('a public REST root cannot hide a rejected SDK key', async () => {
-  const request: typeof fetch = async (input) => String(input).endsWith('/rest/v1/')
-    ? Response.json(description)
-    : new Response('private Storage failure fixture', { status: 400 })
-  await assert.rejects(verifySupabaseConnection(config, signal(), request), errorWithCode('credentials'))
 })
 
 test('missing configuration never sends a request', async () => {
