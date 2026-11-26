@@ -16,15 +16,15 @@ export function PaletteBalance({ palette, value, onChange }: PaletteBalanceProps
   const change = (index: number, requested: number) => {
     const next = [...value] as InvitationDesign['palette_mix']
     const amount = Math.max(0, Math.min(100, Math.round(requested)))
-    const difference = amount - next[index]
+    const difference = amount - (next[index] ?? 0)
     next[index] = amount
     let remaining = Math.abs(difference)
 
     for (const offset of [1, 2]) {
       const other = (index + offset) % 3
-      const available = difference > 0 ? next[other] : 100 - next[other]
+      const available = difference > 0 ? (next[other] ?? 0) : 100 - (next[other] ?? 0)
       const portion = Math.min(remaining, available)
-      next[other] += difference > 0 ? -portion : portion
+      next[other] = (next[other] ?? 0) + (difference > 0 ? -portion : portion)
       remaining -= portion
     }
     onChange(next)
