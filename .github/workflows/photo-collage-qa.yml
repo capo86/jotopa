@@ -1,0 +1,75 @@
+name: Verify invitation collage
+on:
+  push:
+    branches: [photo-collage-qa]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: npm run typecheck && npm run lint && npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Verify motion and layout in Chromium
+        shell: bash
+        run: |
+          cat > collage-qa.html <<'EOF'
+          <!doctype html><html lang="es"><meta name="viewport" content="width=device-width, initial-scale=1"><div id="root"></div><script type="module" src="/collage-qa.tsx"></script></html>
+          EOF
+          cat > collage-qa.tsx <<'EOF'
+          import { createRoot } from 'react-dom/client'
+          import { PhotoCollage } from './src/features/invitation-design/components/PhotoCollage'
+          import './src/features/invitation-design/invitation.css'
+
+          const count = Number(new URLSearchParams(location.search).get('count') ?? 8)
+          const url = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+          const photos = Array.from({ length: count }, (_, index) => ({ asset_id: String(index + 1), caption: 'Un recuerdo' }))
+          const images = Object.fromEntries(photos.map(photo => [photo.asset_id, { small: url, large: url, width: 800, height: 800, alt: 'Fotografía ' + photo.asset_id }]))
+          createRoot(document.getElementById('root')!).render(<main className="iv iv-romantic"><section className="iv-section iv-gallery"><PhotoCollage photos={photos} images={images} /></section></main>)
+          EOF
+          npm run dev -- --host 127.0.0.1 --port 5174 > /tmp/jotopa-vite.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:5174/collage-qa.html > /dev/null; then break; fi
+            sleep 1
+          done
+          node --input-type=module <<'EOF'
+          import { chromium, expect } from '@playwright/test'
+          const browser = await chromium.launch()
+          for (const width of [360, 1440]) {
+            const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: 'no-preference' })
+            await page.goto('http://127.0.0.1:5174/collage-qa.html')
+            const gallery = page.getByRole('region', { name: 'Galería de fotografías' })
+            const cards = gallery.locator('figure')
+            await expect(cards).toHaveCount(8)
+            await expect(gallery.getByRole('img', { name: 'Fotografía 1' })).toBeInViewport()
+            await expect(gallery.getByRole('img', { name: 'Fotografía 2' })).toBeInViewport()
+            const first = await cards.nth(0).boundingBox()
+            const second = await cards.nth(1).boundingBox()
+            expect(second.x).toBeGreaterThan(first.x + first.width - 3)
+            expect(Math.abs(second.y - first.y)).toBeLessThan(first.height / 2)
+            expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+            await expect(cards.first()).toHaveCSS('animation-name', 'iv-collage-drift')
+            await expect(cards.first()).toHaveCSS('animation-play-state', 'running')
+            await gallery.getByRole('button', { name: 'Pausar movimiento' }).click()
+            await expect(cards.first()).toHaveCSS('animation-play-state', 'paused')
+            await gallery.getByRole('button', { name: 'Reanudar movimiento' }).click()
+            await expect(cards.first()).toHaveCSS('animation-play-state', 'running')
+            await page.emulateMedia({ reducedMotion: 'reduce' })
+            await expect(cards.first()).toHaveCSS('animation-name', 'none')
+            await expect(gallery.getByRole('button')).toHaveCount(0)
+            await page.emulateMedia({ reducedMotion: 'no-preference' })
+            await page.goto('http://127.0.0.1:5174/collage-qa.html?count=1')
+            await expect(cards).toHaveCount(1)
+            await expect(cards.first()).toHaveCSS('animation-name', 'none')
+            await expect(gallery.getByRole('button')).toHaveCount(0)
+            await page.close()
+            console.log('Collage verified at ' + width + 'px')
+          }
+          await browser.close()
+          EOF
+
