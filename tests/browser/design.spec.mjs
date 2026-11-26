@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto'
 import {mkdir,writeFile} from 'node:fs/promises'
 import {client,sql,removeTestUsers} from '../../scripts/local-test-helpers.mjs'
 import {fixturePhoto,cleanupDesign} from '../../scripts/design-test-helpers.mjs'
+import {encodeWav} from '../../src/features/wall/wav.ts'
 
 const checked=async promise=>{const result=await promise;if(result.error)throw new Error(`Visual invitation fixture failed (${result.error.code??'request'})`);return result.data}
 const options=[{id:'romantic',label:'Entre nosotros',names:'Lucía & Mateo',photo:'portrait',eyebrow:'JUNTOS, DONDE QUEREMOS ESTAR'},{id:'festive',label:'Que sea inolvidable',names:'Sofía · 30',photo:'celebration',eyebrow:'UN NUEVO AÑO. UNA GRAN CELEBRACIÓN.'},{id:'minimal',label:'Lo esencial',names:'Lucía & Mateo',photo:'couple',eyebrow:'LA ALEGRÍA DE ENCONTRARNOS'}]
@@ -20,11 +21,13 @@ for(const option of options)for(const width of [360,1440])test(`visual invitatio
     expect(await checked(client().rpc('public_invitation',{p_slug:eventSlug}))).toBeNull()
     token=await checked(sdk.rpc('get_guest_invitation_token',{p_event_id:eventId,p_guest_id:guestId}))
     const ownerContext=await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce'});contexts.push(ownerContext)
+    await ownerContext.route('https://music.example.test/**',route=>route.fulfill({status:200,contentType:'audio/wav',body:Buffer.from(encodeWav(new Float32Array(16000)))}))
     const owner=await ownerContext.newPage();owner.setDefaultTimeout(15_000)
     owner.on('pageerror',()=>exceptions.push('Unexpected editor error'));owner.on('console',entry=>logs.push(entry.text()))
     await owner.goto('/iniciar-sesion');await owner.getByLabel('Correo electrónico',{exact:true}).fill(email);await owner.getByLabel('Contraseña',{exact:true}).fill(password);await owner.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(owner.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()
     await owner.goto(`/eventos/${eventId}`);await owner.getByRole('link',{name:'Diseñar invitación',exact:true}).click();await expect(owner.getByRole('heading',{name:'Un encuentro que se siente.',exact:true})).toBeVisible()
     await owner.getByText(option.label,{exact:true}).click();await owner.getByLabel('Nombres o título de la invitación',{exact:true}).fill(option.names);await owner.getByLabel('Frase breve de portada',{exact:true}).fill(option.eyebrow)
+    if(option.id==='romantic'){await owner.getByTitle('Salvia, rosa y blanco',{exact:true}).click();await owner.getByLabel('Enlace directo al audio',{exact:true}).fill('https://music.example.test/cancion.wav')}
     if(option.id==='festive')await owner.getByTitle('Noche y terracota',{exact:true}).click()
     if(option.id==='minimal')await owner.getByLabel('Combinación tipográfica',{exact:true}).selectOption('editorial')
     await owner.getByLabel('Mensaje de bienvenida',{exact:true}).fill('Queremos regalarnos un día para estar cerca, compartir la mesa y celebrar todo lo que nos une. Nos encantaría que seas parte de este recuerdo.')
@@ -57,22 +60,26 @@ for(const option of options)for(const width of [360,1440])test(`visual invitatio
     const eventRecord=await checked(sdk.from('events').select('slug').eq('id',eventId).single())
     await expect(owner.getByRole('button',{name:'Copiar enlace general'})).toBeVisible()
     const generalContext=await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce'});contexts.push(generalContext)
+    await generalContext.route('https://music.example.test/**',route=>route.fulfill({status:200,contentType:'audio/wav',body:Buffer.from(encodeWav(new Float32Array(16000)))}))
     const general=await generalContext.newPage()
     await general.goto(`/e/${eventRecord.slug}`)
     await expect(general.getByRole('heading',{name:option.names,exact:true})).toBeVisible()
     await expect(general.locator('.iv-hero img')).toBeVisible()
     await expect(general.getByText('Camila,',{exact:true})).toHaveCount(0)
     await expect(general.locator('#iv-rsvp')).toHaveCount(0)
+    if(option.id==='romantic')await expect(general.getByRole('button',{name:/música de fondo/})).toBeVisible()
     await expect(general.getByRole('link',{name:/Abrir mi invitación personal/})).toBeVisible()
     expect(await general.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
     sql(`update public.events set status='active' where id='${eventId}';`)
     expect(stored.published.sections.findIndex(section=>section.id==='details')<stored.published.sections.findIndex(section=>section.id==='gallery')).toBe(true)
     expect(await checked(sdk.rpc('get_guest_invitation_token',{p_event_id:eventId,p_guest_id:guestId})).then(value=>value===token)).toBe(true)
     const publicContext=await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce'});contexts.push(publicContext)
+    await publicContext.route('https://music.example.test/**',async route=>{expect((await route.request().allHeaders()).referer).toBeUndefined();await route.fulfill({status:200,contentType:'audio/wav',body:Buffer.from(encodeWav(new Float32Array(16000)))})})
     const guest=await publicContext.newPage();guest.setDefaultTimeout(15_000);guest.on('pageerror',()=>exceptions.push('Unexpected invitation error'));guest.on('console',entry=>logs.push(entry.text()))
     guest.on('request',request=>{const url=new URL(request.url());if(url.pathname.startsWith('/storage/v1/object/sign/event-assets/'))requestedPhotos.add(url.pathname.split('/').at(-2))})
     try{await guest.goto(new URL(`/i/${token}`,test.info().project.use.baseURL).href)}catch{throw new Error('Could not open personal invitation')}
     await expect(guest.getByRole('heading',{name:option.names,exact:true})).toBeVisible();await expect(guest.getByText('Camila,',{exact:true})).toBeVisible()
+    if(option.id==='romantic'){const button=guest.getByRole('button',{name:/música de fondo/});await expect(button).toBeVisible();if(await button.getAttribute('aria-pressed')==='false')await button.click();await expect(button).toHaveAttribute('aria-pressed','true');await guest.evaluate(async()=>{const voice=document.createElement('audio');voice.src='https://music.example.test/voice.wav';document.body.append(voice);await voice.play()});await expect(button).toHaveAttribute('aria-pressed','false')}
     await expect(guest.getByRole('link',{name:'Buenos deseos',exact:true})).toBeVisible()
     await expect.poll(()=>guest.locator('.iv-hero img').evaluateAll(images=>images.length===1&&images.every(image=>image.complete&&image.naturalWidth>0))).toBe(true)
     expect((await tracking()).open_count).toBe(1)

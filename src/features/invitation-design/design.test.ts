@@ -11,6 +11,12 @@ test('visual design validation bounds content, section order, coordinates and sh
   assert.equal(designSchema.safeParse({...design,sections:[...design.sections].reverse()}).success,true)
   for(const invalid of [{...design,template:'unknown'},{...design,palette:'#fff'},{...design,names:'x'.repeat(161)},{...design,welcome:'a'.repeat(64)},{...design,sections:design.sections.slice(1)},{...design,gallery:[{asset_id:'invalid',caption:''}]},{...design,schedule:[{id:'3d959172-8cbd-4f97-a087-55cb37a2a152',label:'Arrival',venue:'Place',address:'Asuncion',starts_at:'invalid',latitude:null,longitude:null}]}])assert.equal(designSchema.safeParse(invalid).success,false)
 })
+test('sage and rose palette and direct HTTPS audio links are validated',()=>{
+  const design=emptyDesign('Encuentro')
+  assert.equal(designSchema.safeParse({...design,palette:'sage_rose',music_url:'https://example.com/song.mp3'}).success,true)
+  for(const url of ['http://example.com/song.mp3','https://youtube.com/watch?v=1','https://user:password@example.com/song.mp3','javascript:alert(1)'])assert.equal(designSchema.safeParse({...design,music_url:url}).success,false)
+  assert.equal(designSchema.parse({...design,music_url:undefined}).music_url,'')
+})
 test('server WebP inspection accepts actual Canvas output and rejects truncation, metadata and animation',()=>{
   const bytes=Buffer.from(readFileSync(new URL('../../../tests/fixtures/canvas-webp.base64',import.meta.url),'utf8').trim(),'base64')
   assert.deepEqual(inspectWebp(bytes,1920),{width:64,height:48})

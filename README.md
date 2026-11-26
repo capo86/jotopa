@@ -2,6 +2,8 @@
 
 ## Enlace general de la invitación
 
+El editor ofrece la paleta **Salvia, rosa y blanco** y una opción de música de fondo por enlace HTTPS directo a un archivo MP3, M4A, AAC, OGG, Opus, WAV o WebM accesible públicamente. Los enlaces a páginas de YouTube o Spotify no son archivos de audio. El audio se intenta reproducir al abrir; si el navegador lo bloquea, el invitado puede activarlo con el botón visible. Al reproducir otra nota de voz la música se pausa. El enlace de audio se comparte con quienes puedan abrir la invitación y el servidor externo recibe la solicitud del archivo; no se envía el Referer de la página.
+
 Desde el editor, **Guardar y publicar** habilita el enlace general y actualiza la versión visible; **Copiar enlace general**, junto a la vista previa, permite compartirla. El evento puede seguir en borrador mientras se comparte esta presentación. Los cambios guardados como borrador no aparecen hasta volver a publicar. Retirar la publicación deshabilita el enlace general.
 
 La página general `/e/:slug` no contiene invitados, confirmaciones, mesas ni acceso para escribir buenos deseos. Incluye una sección visible que dirige a la invitación personal, donde el invitado puede escribir y agregar fotos o audio. Para esas acciones se mantienen los enlaces personales. Las secciones ocultas, sus fotos y los datos bancarios deshabilitados no se incluyen en la respuesta pública. Las fotos se sirven desde el almacenamiento privado mediante enlaces temporales. Publicar habilita el acceso general para cualquier persona con el enlace; los diseños publicados anteriormente requieren volver a publicarse para habilitarlo.

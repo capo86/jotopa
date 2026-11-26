@@ -12,6 +12,12 @@ export function isAllowedLink(value:string,kind:LinkKind='external'):boolean {
   }catch{return false}
 }
 
+export function isAllowedAudioLink(value:string):boolean {
+  if(!value)return true
+  if(!isAllowedLink(value))return false
+  try{return /\.(mp3|m4a|aac|ogg|opus|wav|webm)$/i.test(new URL(value).pathname)}catch{return false}
+}
+
 export function locationLinks(value:{google_maps_url:string;waze_url:string;address:string;latitude:number|null;longitude:number|null}){
   const coordinates=value.latitude!==null&&value.longitude!==null
   const query=coordinates?`${value.latitude},${value.longitude}`:value.address
