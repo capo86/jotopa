@@ -264,3 +264,5 @@
   .iv .iv-bank-details dl>div{grid-template-columns:160px minmax(0,1fr);gap:20px}
   .iv-minimal .iv-location-content,.iv-minimal .iv-lodging-content{padding-inline:0}
 }
+
+.iv .iv-page{background:linear-gradient(180deg,color-mix(in srgb,var(--iv-ink) 8%,var(--iv-paper)) 0 var(--iv-mix-ink),color-mix(in srgb,var(--iv-soft) 65%,var(--iv-paper)) var(--iv-mix-ink) var(--iv-mix-soft-end),color-mix(in srgb,var(--iv-accent) 9%,var(--iv-paper)) var(--iv-mix-soft-end) 100%)}

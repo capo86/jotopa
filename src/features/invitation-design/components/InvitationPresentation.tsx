@@ -13,7 +13,8 @@ import '../invitation.css'
 
 export function InvitationPresentation({design,event,guestName,images,rsvp,footer,personalDetails,wall,onImageError}:{design:InvitationDesign;event:PresentationEvent;guestName:string;images:AssetImages;rsvp:ReactNode;footer?:ReactNode;personalDetails?:ReactNode;wall?:ReactNode;onImageError?:()=>void}){
   const palette=PALETTES[design.palette]
-  const styles={'--iv-paper':palette.paper,'--iv-ink':palette.ink,'--iv-accent':palette.accent,'--iv-soft':palette.soft} as CSSProperties
+  const mix=design.palette_mix
+  const styles={'--iv-paper':palette.paper,'--iv-ink':palette.ink,'--iv-accent':palette.accent,'--iv-soft':palette.soft,'--iv-mix-ink':mix[0]+'%','--iv-mix-soft-end':mix[0]+mix[1]+'%'} as CSSProperties
   const active=(id:string)=>design.sections.some(section=>section.id===id&&section.enabled)
   const renderSection=(id:InvitationDesign['sections'][number]['id'])=>{
     switch(id){
