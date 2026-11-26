@@ -6,7 +6,7 @@ import {client,sql,removeTestUsers} from '../../scripts/local-test-helpers.mjs'
 import {cleanupDesign,designFixture,uploadFixture,webpFixtures} from '../../scripts/design-test-helpers.mjs'
 
 const checked=async promise=>{const result=await promise;if(result.error)throw new Error(`Seating browser operation failed (${result.error.code??'network'})`);return result.data}
-const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mi perfil',exact:true})).toBeVisible()}
+const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()}
 const downloadedBook=async download=>{const book=new ExcelJS.Workbook();await book.xlsx.load(await readFile(await download.path()));await download.delete();return book}
 for(const width of [360,1440])test(`stage B: whole-party RSVP, Excel, table assignment and private projection at ${width}px`,async({browser})=>{
   test.setTimeout(120000)

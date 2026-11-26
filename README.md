@@ -1,5 +1,13 @@
 # Jotopa
 
+## Enlace general de la invitación
+
+Desde el editor, **Guardar y publicar** habilita el enlace general y actualiza la versión visible; **Copiar enlace general**, junto a la vista previa, permite compartirla. El evento puede seguir en borrador mientras se comparte esta presentación. Los cambios guardados como borrador no aparecen hasta volver a publicar. Retirar la publicación deshabilita el enlace general.
+
+La página general `/e/:slug` no contiene invitados, confirmaciones, mesas ni acceso para escribir buenos deseos. Para esas acciones se mantienen los enlaces personales. Las secciones ocultas, sus fotos y los datos bancarios deshabilitados no se incluyen en la respuesta pública. Las fotos se sirven desde el almacenamiento privado mediante enlaces temporales. Publicar habilita el acceso general para cualquier persona con el enlace; los diseños publicados anteriormente requieren volver a publicarse para habilitarlo.
+
+El envío por WhatsApp sigue siendo manual y utiliza la cola de invitados con consentimiento. La pantalla de ingreso conduce a Mis eventos. La galería de la invitación reutiliza las fotografías existentes y permite recorrerlas con controles o mediante desplazamiento.
+
 Jotopa significa **encuentro** en guaraní: un servicio de invitaciones digitales, convocatoria y encuentros. Interfaz en español de Paraguay, zona horaria predeterminada `America/Asuncion` y fechas de base de datos en UTC. Las Fases 1A, 1B, 2A, 2B, 3A y las Etapas A y B se conservan. La **Etapa C** incorpora buenos deseos multimedia y moderación. La **Etapa D** agrega conversación en tiempo real y proyección horizontal con historial completo. El desarrollo se detiene después de D para revisión; administración privada (E) y panel/recordatorios (F) siguen pendientes.
 
 La creación de usuarios en la nube está reservada al administrador de plataforma y el registro público está deshabilitado. El acceso para crear miembros está en **Mi perfil → Administrar usuarios** (`/paneladmin/usuarios`). La restricción de creación de eventos a administradores y el resto de la administración privada siguen pendientes. El RSVP actual solo acepta Sí/No; las respuestas Quizás anteriores se conservan en historial y archivo privado y pasan a pendientes, sin convertirse en confirmaciones.

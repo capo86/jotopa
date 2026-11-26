@@ -20,9 +20,9 @@ test('login permits existing passwords and reset enforces the new password rules
 })
 
 test('return paths cannot redirect outside the supported private pages', () => {
-  for (const from of ['https://example.test', '//example.test', '/configuracion', '/restablecer-contrasena', null]) assert.equal(returnPath({ from }), '/perfil')
+  for (const from of ['https://example.test', '//example.test', '/configuracion', '/restablecer-contrasena', null]) assert.equal(returnPath({ from }), '/eventos')
   assert.equal(returnPath({ from: '/eventos' }), '/eventos')
-  assert.equal(returnPath(undefined), '/perfil')
+  assert.equal(returnPath(undefined), '/eventos')
   for (const suffix of ['invitados', 'invitados/importar','invitaciones','invitaciones/plantillas','buenos-deseos']) {
     const path = `/eventos/30000000-0000-4000-8000-000000000001/${suffix}`
     assert.equal(returnPath({ from: path }), path)

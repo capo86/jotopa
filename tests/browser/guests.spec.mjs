@@ -10,7 +10,7 @@ const checked = async promise => { const result = await promise; if(result.error
 const login = async (page,account,password) => {
   await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(account.email)
   await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click()
-  await expect(page.getByRole('heading',{name:'Mi perfil',exact:true})).toBeVisible()
+  await expect(page.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()
 }
 const workbookDownload = async download => { const path = await download.path(); const book = new ExcelJS.Workbook(); await book.xlsx.load(await readFile(path));return book }
 

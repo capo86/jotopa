@@ -40,7 +40,7 @@ for(const width of [360,1440]) test(`personal invitation and real RSVP/QR lifecy
     owner.setDefaultTimeout(10_000);guest.setDefaultTimeout(10_000)
     for(const page of [owner,guest]){page.on('pageerror',()=>exceptions.push('Browser error'));page.on('console',message=>logs.push(message.text()))}
     guest.on('request',request=>referrers.push(request.headers().referer ?? ''))
-    await owner.goto('/iniciar-sesion');await owner.getByLabel('Correo electrónico',{exact:true}).fill(email);await owner.getByLabel('Contraseña',{exact:true}).fill(password);await owner.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(owner.getByRole('heading',{name:'Mi perfil',exact:true})).toBeVisible()
+    await owner.goto('/iniciar-sesion');await owner.getByLabel('Correo electrónico',{exact:true}).fill(email);await owner.getByLabel('Contraseña',{exact:true}).fill(password);await owner.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(owner.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()
     await owner.goto(`/eventos/${eventId}/editar`);await owner.getByLabel('Estado',{exact:true}).selectOption('active')
     await owner.getByLabel('Fecha límite de confirmación',{exact:true}).fill(new Date(Date.now()+3600000).toISOString().slice(0,16))
     await owner.getByRole('button',{name:'Guardar evento',exact:true}).click();await expect(owner.getByRole('heading',{name:'Un encuentro para recordar',exact:true})).toBeVisible()

@@ -1,4 +1,4 @@
-
+﻿
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -47,14 +47,14 @@ isOneToOne: false
                   ]
                 },"event_invitation_designs": {
                   Row: {
-                    "created_at": string,"draft": NonNullable<Json>,"event_id": string,"id": string,"published": Json | null,"published_at": string | null,"published_revision": number | null,"revision": number,"updated_at": string
+                    "created_at": string,"draft": NonNullable<Json>,"event_id": string,"id": string,"public_enabled": boolean,"published": Json | null,"published_at": string | null,"published_revision": number | null,"revision": number,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"draft": NonNullable<Json>,"event_id": string,"id"?: string,"published"?: Json | null,"published_at"?: string | null,"published_revision"?: number | null,"revision"?: number,"updated_at"?: string
+                    "created_at"?: string,"draft": NonNullable<Json>,"event_id": string,"id"?: string,"public_enabled"?: boolean,"published"?: Json | null,"published_at"?: string | null,"published_revision"?: number | null,"revision"?: number,"updated_at"?: string
                   }
                   Update: {
-                    "created_at"?: string,"draft"?: NonNullable<Json>,"event_id"?: string,"id"?: string,"published"?: Json | null,"published_at"?: string | null,"published_revision"?: number | null,"revision"?: number,"updated_at"?: string
+                    "created_at"?: string,"draft"?: NonNullable<Json>,"event_id"?: string,"id"?: string,"public_enabled"?: boolean,"published"?: Json | null,"published_at"?: string | null,"published_revision"?: number | null,"revision"?: number,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -525,6 +525,9 @@ isOneToOne: false
                            },
 "projection_wall":
 { Args: { "p_access": string,"p_request"?: Json,"p_slug": string }; Returns: Json
+                           },
+"public_invitation":
+{ Args: { "p_slug": string }; Returns: Json
                            },
 "publish_invitation_design":
 { Args: { "p_event_id": string,"p_expected_revision": number }; Returns: undefined

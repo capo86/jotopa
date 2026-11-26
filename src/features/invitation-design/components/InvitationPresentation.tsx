@@ -7,6 +7,7 @@ import {Countdown} from './Countdown'
 import {ScheduleSection} from './ScheduleSection'
 import {GiftsSection} from './GiftsSection'
 import {LodgingSection} from './LodgingSection'
+import {PhotoCarousel} from './PhotoCarousel'
 import '../invitation.css'
 
 export function InvitationPresentation({design,event,guestName,images,rsvp,footer,personalDetails,wall,onImageError}:{design:InvitationDesign;event:PresentationEvent;guestName:string;images:AssetImages;rsvp:ReactNode;footer?:ReactNode;personalDetails?:ReactNode;wall?:ReactNode;onImageError?:()=>void}){
@@ -21,7 +22,7 @@ export function InvitationPresentation({design,event,guestName,images,rsvp,foote
       case 'gifts':return <GiftsSection gifts={design.gifts} />
       case 'lodging':return <LodgingSection items={design.lodging} images={images} {...(onImageError?{onImageError}:{})} />
       case 'dress':return design.dress_code||design.dress_photo_asset_id?<section className="iv-section iv-dress"><span className="iv-ornament" aria-hidden="true">◇</span><p className="iv-kicker">VESTIMENTA SUGERIDA</p><h2>Un detalle más.</h2><p className="iv-prose">{design.dress_code}</p>{design.dress_photo_asset_id?<div className="iv-dress-photo"><AssetPhoto key={images[design.dress_photo_asset_id]?.large??design.dress_photo_asset_id} image={images[design.dress_photo_asset_id]} {...(onImageError?{onError:onImageError}:{})} /></div>:null}</section>:null
-      case 'gallery':return design.gallery.length?<section className="iv-section iv-gallery"><div className="iv-section-heading"><p className="iv-kicker">INSTANTES QUE NOS TRAJERON HASTA ACÁ</p><h2>Un poco de nuestra historia.</h2></div><div className="iv-gallery-grid">{design.gallery.map((photo,index)=><figure key={photo.asset_id} className={`iv-gallery-item iv-gallery-item-${index%3}`}><AssetPhoto key={images[photo.asset_id]?.large??photo.asset_id} image={images[photo.asset_id]} {...(onImageError?{onError:onImageError}:{})} />{photo.caption?<figcaption>{photo.caption}</figcaption>:null}</figure>)}</div></section>:null
+      case 'gallery':return design.gallery.length?<section className="iv-section iv-gallery"><div className="iv-section-heading"><p className="iv-kicker">INSTANTES QUE NOS TRAJERON HASTA ACÁ</p><h2>Un poco de nuestra historia.</h2></div><PhotoCarousel photos={design.gallery} images={images} {...(onImageError?{onImageError}:{})} /></section>:null
       case 'details':return design.details?<section className="iv-section iv-details"><p className="iv-kicker">ANTES DE ENCONTRARNOS</p><h2>Para tener en cuenta.</h2><p className="iv-prose">{design.details}</p></section>:null
       case 'rsvp':return <section className="iv-section iv-rsvp"><div className="iv-section-heading"><span className="iv-ornament" aria-hidden="true">✉</span><p className="iv-kicker">LO MÁS IMPORTANTE ES COMPARTIRLO</p><h2>¿Contamos con vos?</h2></div><div className="iv-rsvp-panel">{rsvp}</div></section>
       case 'closing':return <section className="iv-section iv-closing"><span className="iv-ornament" aria-hidden="true">✳</span><p className="iv-kicker">ESTE DÍA TAMBIÉN ES TUYO</p><h2>{design.closing||'Qué lindo será encontrarnos.'}</h2><p className="iv-closing-signature">{design.names||event.title}</p></section>

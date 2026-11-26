@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os'
 import {client,sql,removeTestUsers} from '../../scripts/local-test-helpers.mjs'
 
 const checked=async promise=>{const result=await promise;if(result.error)throw new Error(`Delivery browser fixture failed (${result.error.code})`);return result.data}
-const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mi perfil',exact:true})).toBeVisible()}
+const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()}
 for(const width of [360,1440])test(`manual invitation queue, personal openings and timeline at ${width}px`,async({browser})=>{
   const users=[],contexts=[],tokens=[],exceptions=[],consoleLines=[],waUrls=[],password=`DeliveryBrowser42-${randomUUID()}`
   let eventId

@@ -9,7 +9,7 @@ async function login(page, email, password) {
   await page.getByLabel('Correo electrónico', { exact: true }).fill(email)
   await page.getByLabel('Contraseña', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Iniciar sesión', exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Mi perfil', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Mis eventos', exact: true })).toBeVisible()
 }
 async function teamMail(email) {
   for (let attempt = 0; attempt < 30; attempt++) {

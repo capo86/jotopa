@@ -7,7 +7,7 @@ import {checked,cleanupWall,beginWall,wall,wallAudioForm} from '../../scripts/wa
 import {encodeWav} from '../../src/features/wall/wav.ts'
 
 test.use({launchOptions:{args:['--use-fake-device-for-media-stream','--use-fake-ui-for-media-stream']}})
-const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mi perfil',exact:true})).toBeVisible()}
+const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()}
 const layouts=[{template:'romantic',name:'Entre nosotros',names:'Lucía & Mateo',palette:'olive',font_pair:'classic'},{template:'festive',name:'Que sea inolvidable',names:'Valentina · 15 años',palette:'rose',font_pair:'modern'},{template:'minimal',name:'Lo esencial',names:'Celebrar lo que somos',palette:'night',font_pair:'editorial'}]
 
 for(const layout of layouts)for(const width of [360,1440])test(`stage C: ${layout.template}, multimedia, real MediaRecorder and moderation at ${width}px`,async({browser})=>{

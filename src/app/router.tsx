@@ -3,9 +3,11 @@ import { AppLayout } from './layouts/AppLayout'
 import { RouteErrorPage } from '../pages/RouteErrorPage'
 import { RouteLoadingPage } from '../pages/RouteLoadingPage'
 import { RequireAuth, RecoveryRedirect } from '../features/auth'
+import { Navigate } from 'react-router'
 
 export const router = createBrowserRouter([
   { path: 'i/:token', lazy: () => import('../features/rsvp/pages/InvitationPage'), HydrateFallback: RouteLoadingPage, ErrorBoundary: RouteErrorPage },
+  { path: 'e/:slug', lazy: () => import('../features/invitation-design/pages/PublicInvitationPage'), HydrateFallback: RouteLoadingPage, ErrorBoundary: RouteErrorPage },
   { path: 'e/:slug/pantalla', lazy: () => import('../features/wall/pages/ProjectionPage'), HydrateFallback: RouteLoadingPage, ErrorBoundary: RouteErrorPage },
   { path: 'e/:slug/participar', lazy: () => import('../features/wall/pages/ParticipationPage'), HydrateFallback: RouteLoadingPage, ErrorBoundary: RouteErrorPage },
   {
@@ -14,7 +16,7 @@ export const router = createBrowserRouter([
     HydrateFallback: RouteLoadingPage,
     children: [
       { Component: RecoveryRedirect, children: [
-        { index: true, lazy: () => import('../pages/HomePage') },
+        { index: true, element: <Navigate to="/eventos" replace /> },
         { path: 'configuracion', lazy: () => import('../pages/SettingsPage') },
         { path: 'iniciar-sesion', lazy: () => import('../features/auth/pages/LoginPage') },
         { path: 'recuperar-contrasena', lazy: () => import('../features/auth/pages/RecoverPasswordPage') },

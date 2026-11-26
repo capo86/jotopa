@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigation } from 'react-router'
+import { NavLink, Outlet, useLocation, useNavigation } from 'react-router'
 import { Brand } from '../../components/ui/Brand'
 import { Icon } from '../../components/ui/Icon'
 import { AccountMenu } from '../../features/auth'
@@ -11,6 +11,9 @@ const navigation = [
 
 export function AppLayout() {
   const { state } = useNavigation()
+  const { pathname } = useLocation()
+
+  if (pathname === '/iniciar-sesion') return <main className="flex min-h-screen items-center justify-center bg-canvas px-5 py-12"><Outlet /></main>
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[230px_minmax(0,1fr)]">

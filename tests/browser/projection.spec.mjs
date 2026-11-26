@@ -22,7 +22,7 @@ async function prepareCapture(page){
 }
 
 
-const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mi perfil',exact:true})).toBeVisible()}
+const login=async(page,email,password)=>{await page.goto('/iniciar-sesion');await page.getByLabel('Correo electrónico',{exact:true}).fill(email);await page.getByLabel('Contraseña',{exact:true}).fill(password);await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await expect(page.getByRole('heading',{name:'Mis eventos',exact:true})).toBeVisible()}
 function decodeQr(dataUrl){const png=PNG.sync.read(Buffer.from(dataUrl.split(',')[1],'base64')),pixels=new Uint8ClampedArray(png.width*png.height);for(let i=0;i<pixels.length;i++)pixels[i]=(png.data[i*4]+2*png.data[i*4+1]+png.data[i*4+2])>>2;return new QRCodeReader().decode(new BinaryBitmap(new HybridBinarizer(new RGBLuminanceSource(pixels,png.width,png.height))),new Map([[DecodeHintType.PURE_BARCODE,true]])).getText()}
 
 for(const width of [360,1440])test(`stage D: full live conversation, private screen, QR and uninterrupted history at ${width}px`,async({browser})=>{

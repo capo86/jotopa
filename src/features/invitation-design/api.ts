@@ -54,3 +54,13 @@ export async function publicAssetImages(token:string):Promise<AssetImages>{
     return [asset.id,{...asset,large:new URL(asset.large,base).href,small:new URL(asset.small,base).href}]
   }))
 }
+export async function fetchPublicInvitation(slug:string){
+  const data=z.object({event:z.object({title:z.string(),starts_at:z.string(),timezone:z.string(),rsvp_deadline:z.string().nullable()}),design:designSchema,assets:z.array(imageSchema)}).parse(await invoke({action:'public',slug},true))
+  if(!supabaseConfig)throw new Error('image_unavailable')
+  const base=supabaseConfig.url
+  const images=Object.fromEntries(data.assets.map(asset=>{
+    if(![asset.large,asset.small].every(path=>path.startsWith('/storage/v1/object/sign/event-assets/')&&!path.includes('#')))throw new Error('image_unavailable')
+    return [asset.id,{...asset,large:new URL(asset.large,base).href,small:new URL(asset.small,base).href}]
+  }))
+  return {event:data.event,design:{...data.design,show_guest_name:false,sections:data.design.sections.map(section=>section.id==='rsvp'?{...section,enabled:false}:section)},images}
+}

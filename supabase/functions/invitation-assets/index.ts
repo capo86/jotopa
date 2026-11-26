@@ -32,6 +32,17 @@ Deno.serve(async request=>{
       if(total>1024)return reply({error:'invalid_request'},400)
       const body:unknown=JSON.parse(new TextDecoder().decode(bytes))
       if(!record(body))return reply({error:'invalid_request'},400)
+      if(body.action==='public'&&Object.keys(body).sort().join(',')==='action,slug'&&typeof body.slug==='string'&&/^[a-z0-9-]{1,100}$/.test(body.slug)){
+        const {data,error}=await sdk(publicKey).rpc('public_invitation',{p_slug:body.slug})
+        if(error||!record(data)||!record(data.event)||!record(data.design)||!Array.isArray(data.assets))return reply({error:'invitation_unavailable'},404)
+        const assets:Record<string,unknown>[]=[]
+        for(const item of data.assets)if(record(item))assets.push(item)
+        const paths=assets.flatMap(asset=>[String(asset.large_path),String(asset.small_path)])
+        const signed=paths.length?await sdk(serverKey).storage.from('event-assets').createSignedUrls(paths,60):null
+        if(signed?.error||signed?.data?.some(item=>item.error||!item.signedUrl))return reply({error:'image_unavailable'},503)
+        const relative=(path:string)=>{const item=signed?.data?.find(value=>value.path===path);if(!item?.signedUrl)throw new Error('image_unavailable');const parsed=new URL(item.signedUrl);return parsed.pathname+parsed.search}
+        return reply({event:data.event,design:data.design,assets:assets.map(asset=>({id:asset.id,alt:asset.alt,width:asset.width,height:asset.height,large:relative(String(asset.large_path)),small:relative(String(asset.small_path))}))})
+      }
       if(body.action==='sign'){
         if(Object.keys(body).sort().join(',')!=='action,token'||typeof body.token!=='string'||!/^[a-f0-9]{64}$/.test(body.token))return reply({error:'invitation_unavailable'},400)
         const {data,error}=await sdk(publicKey).rpc('invitation_asset_manifest',{p_token:body.token})

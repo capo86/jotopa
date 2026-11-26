@@ -43,7 +43,8 @@ test('private access, profile, session persistence, logout, login and password r
     await page.getByLabel('Correo electrónico', { exact: true }).fill(email)
     await page.getByLabel('Contraseña', { exact: true }).fill(password)
     await page.getByRole('button', { name: 'Iniciar sesión', exact: true }).click()
-    await expect(page).toHaveURL(/\/perfil$/)
+    await expect(page).toHaveURL(/\/eventos$/)
+    await page.goto('/perfil')
     await expect(page.getByText('Organizador', { exact: true })).toBeVisible()
     await page.reload()
     await expect(page.getByLabel('Nombre completo', { exact: true })).toHaveValue('Anfitriona de prueba')
@@ -94,7 +95,7 @@ test('private access, profile, session persistence, logout, login and password r
     await expect(page.getByRole('alert')).toContainText('no son correctos')
     await page.getByLabel('Contraseña', { exact: true }).fill(newPassword)
     await page.getByRole('button', { name: 'Iniciar sesión', exact: true }).click()
-    await expect(page).toHaveURL(/\/perfil$/)
+    await expect(page).toHaveURL(/\/eventos$/)
     expect(errors).toHaveLength(0)
   } finally {
     // Cleanup touches only accounts and Mailpit messages created by this test.

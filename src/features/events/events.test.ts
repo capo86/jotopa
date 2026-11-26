@@ -27,5 +27,5 @@ test('private event return paths and team acceptance survive authentication with
   const path = '/eventos/10000000-0000-4000-8000-000000000001/equipo'
   assert.equal(returnPath({ from: path }), path)
   assert.equal(returnPath({ from: '/equipo/aceptar' }), '/equipo/aceptar')
-  assert.equal(returnPath({ from: '/eventos/../../example.test' }), '/perfil')
+  assert.equal(returnPath({ from: '/eventos/../../example.test' }), '/eventos')
 })
