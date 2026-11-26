@@ -79,6 +79,9 @@
 .iv .iv-carousel-controls button{width:44px;height:44px;border:1px solid currentColor;border-radius:50%;font-size:1.25rem;cursor:pointer}
 .iv .iv-carousel-controls button:disabled{opacity:.35;cursor:default}
 .iv .iv-carousel-controls button:focus-visible,.iv .iv-carousel-track:focus-visible{outline:2px solid var(--iv-accent);outline-offset:4px}
+.iv .iv-personal-entry{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;margin-top:24px;padding:12px 22px;border:1px solid var(--iv-ink);border-radius:999px;color:var(--iv-ink);font-size:.8rem;text-decoration:none}
+.iv .iv-personal-entry:hover{background:var(--iv-ink);color:var(--iv-paper)}
+.iv .iv-personal-entry:focus-visible{outline:2px solid var(--iv-accent);outline-offset:4px}
 .iv .iv-details{border-block:1px solid color-mix(in srgb,var(--iv-ink) 20%,transparent);max-width:1100px;margin:auto}
 .iv .iv-details h2{margin-top:20px}
 .iv .iv-rsvp{background:var(--iv-soft)}
