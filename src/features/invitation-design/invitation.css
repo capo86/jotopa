@@ -273,14 +273,21 @@
 .iv .iv-hero-quote-signature{display:block;margin-top:12px;font-family:var(--iv-body);font-size:.72rem;font-style:normal;letter-spacing:.08em;line-height:1.5}
 .iv .iv-hero-romantic:has(.iv-hero-quote) .iv-hero-link{margin-top:38px}
 
-.iv .iv-floating-gallery{max-width:830px;margin-inline:auto;padding:18px 8px 36px}
-.iv .iv-floating-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:start;column-gap:clamp(8px,2vw,22px);row-gap:clamp(18px,4vw,48px);padding:20px 4px 30px}
+.iv .iv-floating-gallery{max-width:720px;margin-inline:auto;padding:8px 6px 22px}
+.iv .iv-floating-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:start;column-gap:clamp(4px,1vw,10px);row-gap:8px;padding:8px 2px 18px}
 .iv .iv-floating-item{grid-column:span 7;min-width:0;margin:0;opacity:1;position:relative}
 .iv .iv-floating-item:nth-child(4n+2),.iv .iv-floating-item:nth-child(4n+3){grid-column:span 5}
-.iv .iv-floating-item:nth-child(4n+2){margin-top:clamp(88px,17vw,150px);margin-left:-28%;z-index:2}
-.iv .iv-floating-item:nth-child(4n+3){margin-top:clamp(-95px,-14vw,-55px);margin-left:12%;z-index:3}
-.iv .iv-floating-item:nth-child(4n+4){margin-top:clamp(35px,8vw,85px);margin-left:-13%;z-index:1}
+.iv .iv-floating-item:nth-child(4n+2){margin-top:clamp(35px,7vw,65px);margin-left:-24%;z-index:2}
+.iv .iv-floating-item:nth-child(4n+3){margin-top:calc(-1 * clamp(75px,15vw,130px));margin-left:10%;z-index:3}
+.iv .iv-floating-item:nth-child(4n+4){margin-top:calc(-1 * clamp(60px,12vw,105px));margin-left:-12%;z-index:1}
 .iv .iv-floating-item:last-child:nth-child(odd){grid-column:3 / 11;justify-self:center;width:88%}
+@media (max-width:640px){
+  .iv .iv-floating-gallery{padding:2px 5px 18px}
+  .iv .iv-floating-grid{column-gap:4px;row-gap:2px;padding:6px 0 12px}
+  .iv .iv-floating-item:nth-child(4n+2){margin-top:32px;margin-left:-22%}
+  .iv .iv-floating-item:nth-child(4n+3){margin-top:-92px;margin-left:8%}
+  .iv .iv-floating-item:nth-child(4n+4){margin-top:-76px;margin-left:-10%}
+}
 .iv .iv-floating-depth{min-width:0}
 .iv .iv-floating-card{--iv-float-y:10px;padding:clamp(6px,1.3vw,12px);background:var(--iv-paper);color:var(--iv-ink);box-shadow:0 12px 35px color-mix(in srgb,var(--iv-ink) 19%,transparent),0 2px 8px #00000012;rotate:-3deg}
 .iv .iv-floating-item:nth-child(even) .iv-floating-card{--iv-float-y:-11px;rotate:3deg}
