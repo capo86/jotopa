@@ -12,20 +12,24 @@ type FloatingPhotoCollageProps = {
 export function FloatingPhotoCollage({ photos, images, kenBurns, onImageError }: FloatingPhotoCollageProps) {
   const galleryRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [visible, setVisible] = useState(false)
   const [selected, setSelected] = useState<number | null>(null)
 
+  const photoIds = photos.map(photo => photo.asset_id).join(':')
   useEffect(() => {
-    const element = galleryRef.current
-    if (!element) return
-    if (!('IntersectionObserver' in window)) return
-    const observer = new IntersectionObserver(([entry]) => {
-      setVisible(entry?.isIntersecting ?? false)
-    }, { rootMargin: '100px 0px' })
-    observer.observe(element)
+    const items = galleryRef.current?.querySelectorAll<HTMLElement>('.iv-floating-item')
+    if (!items?.length) return
+    if (!('IntersectionObserver' in window)) {
+      items.forEach(item => { item.dataset.visible = 'true' })
+      return
+    }
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.target instanceof HTMLElement) entry.target.dataset.visible = String(entry.isIntersecting)
+      }
+    }, { rootMargin: '80px 0px' })
+    items.forEach(item => observer.observe(item))
     return () => observer.disconnect()
-  }, [])
-
+  }, [photoIds])
   const openPhoto = (index: number) => {
     setSelected(index)
     dialogRef.current?.showModal()
@@ -35,7 +39,7 @@ export function FloatingPhotoCollage({ photos, images, kenBurns, onImageError }:
   const activeImage = activePhoto ? images[activePhoto.asset_id] : undefined
 
   return (
-    <div ref={galleryRef} className="iv-floating-gallery" role="region" aria-label="Galería de fotografías" data-visible={visible} data-ken-burns={kenBurns}>
+    <div ref={galleryRef} className="iv-floating-gallery" role="region" aria-label="Galería de fotografías" data-ken-burns={kenBurns}>
       <div className="iv-floating-grid">
         {photos.map((photo, index) => {
           const image = images[photo.asset_id]
