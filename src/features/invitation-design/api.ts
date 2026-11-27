@@ -64,3 +64,33 @@ export async function fetchPublicInvitation(slug:string){
   }))
   return {event:data.event,design:{...data.design,show_guest_name:false,sections:data.design.sections.map(section=>section.id==='rsvp'?{...section,enabled:false}:section)},images}
 }
+
+async function invokeAudio(body: FormData | Record<string, string>, publicRequest = false) {
+  const client = publicRequest ? anonymous : requireSupabase()
+  if (!client) throw new Error('audio_unavailable')
+  const { data, error } = await client.functions.invoke('invitation-audio', { body })
+  if (error) {
+    let code = 'audio_unavailable'
+    if ('context' in error && error.context instanceof Response) {
+      try {
+        const parsed = z.object({ error: z.string() }).parse(await error.context.json())
+        code = parsed.error
+      } catch { /* safe fallback */ }
+    }
+    throw new Error(code)
+  }
+  return data as unknown
+}
+export async function uploadInvitationAudio(eventId: string, file: File) {
+  const form = new FormData()
+  form.set('event_id', eventId)
+  form.set('file', file)
+  return z.object({ ok: z.literal(true), id: z.uuid() }).parse(await invokeAudio(form)).id
+}
+export async function signInvitationAudio(assetId: string, access: { eventId: string } | { token: string } | { slug: string }) {
+  const body = { action: 'sign', asset_id: assetId, ...('eventId' in access ? { event_id: access.eventId } : access) }
+  const result = z.object({ url: z.url() }).parse(await invokeAudio(body, !('eventId' in access)))
+  if (!supabaseConfig || !result.url.startsWith(new URL('/storage/v1/object/sign/invitation-audio/', supabaseConfig.url).href))
+    throw new Error('audio_unavailable')
+  return result.url
+}
