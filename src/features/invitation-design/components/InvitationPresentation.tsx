@@ -15,6 +15,7 @@ export function InvitationPresentation({design,event,guestName,images,rsvp,foote
   const palette=PALETTES[design.palette]
   const mix=design.palette_mix
   const styles={'--iv-paper':palette.paper,'--iv-ink':palette.ink,'--iv-accent':palette.accent,'--iv-soft':palette.soft,'--iv-mix-ink':mix[0]+'%','--iv-mix-soft-end':mix[0]+mix[1]+'%'} as CSSProperties
+  const active=(id:string)=>design.sections.some(section=>section.id===id&&section.enabled)
   const renderSection=(id:InvitationDesign['sections'][number]['id'])=>{
     switch(id){
       case 'welcome':return <section className="iv-section iv-welcome"><span className="iv-ornament" aria-hidden="true">❋</span><p className="iv-kicker">EL ENCUENTRO EMPIEZA CON VOS</p>{design.show_guest_name?<p className="iv-guest-name">{guestName},</p>:null}<h2>hay un lugar para vos<br /><em>en este día.</em></h2><p className="iv-prose">{design.welcome||'Nos hace ilusión compartir este día con vos. Será un encuentro para celebrar, abrazarnos y crear nuevos recuerdos.'}</p></section>
