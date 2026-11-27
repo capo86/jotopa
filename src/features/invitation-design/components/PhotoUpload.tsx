@@ -59,8 +59,8 @@ export function PhotoUpload({
       setNotice('La biblioteca admite hasta 20 fotos. Elegí menos archivos o eliminá fotos que ya no usás.')
       return
     }
-    if (kind === 'gallery' && files.length > 8 - galleryCount) {
-      setNotice('La galería admite hasta 8 fotos. Elegí menos archivos para esta carga.')
+    if (kind === 'gallery' && files.length > 10 - galleryCount) {
+      setNotice('La galería admite hasta 10 fotos. Elegí menos archivos para esta carga.')
       return
     }
     onBusy(true)
@@ -71,7 +71,7 @@ export function PhotoUpload({
     <p className="text-xs leading-6 text-muted">Seleccioná varias fotos para la biblioteca o la galería, sin escribir títulos. Para la portada se elige una foto. JPG, PNG o WebP · hasta 10 MB y 24 megapíxeles por archivo.</p>
     <div className="mt-4 flex flex-wrap gap-3">
       {(['library', 'cover', 'gallery'] as const).map(kind => {
-        const disabled = upload.isPending || libraryCount >= 20 || (kind === 'gallery' && galleryCount >= 8)
+        const disabled = upload.isPending || libraryCount >= 20 || (kind === 'gallery' && galleryCount >= 10)
         const label = kind === 'library' ? 'Cargar a la biblioteca' : kind === 'cover' ? 'Cargar portada' : 'Agregar a la galería'
         return <label key={kind} className={'relative inline-flex min-h-11 items-center rounded-lg border border-sand bg-paper px-4 text-xs text-forest has-focus-visible:outline-2 ' + (disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer')}>
           {label}

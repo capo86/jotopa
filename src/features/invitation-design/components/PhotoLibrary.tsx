@@ -1,12 +1,63 @@
-import {useMutation,useQueryClient} from '@tanstack/react-query'
-import {removeAsset} from '../api'
-import {designError,designAssetIds} from '../models'
-import type {AssetImages,DesignAsset,InvitationDesign} from '../models'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { removeAsset } from '../api'
+import { designError, designAssetIds } from '../models'
+import type { AssetImages, DesignAsset, InvitationDesign } from '../models'
 
-export function PhotoLibrary({eventId,assets,images,design,onCover,onGallery}:{eventId:string;assets:DesignAsset[];images:AssetImages;design:InvitationDesign;onCover:(id:string|null)=>void;onGallery:(id:string)=>void}){
-  const cache=useQueryClient(),remove=useMutation({mutationFn:(id:string)=>removeAsset(eventId,id),onSuccess:()=>cache.invalidateQueries({queryKey:['design-assets',eventId]})})
-  const ready=assets.filter(asset=>asset.status==='ready')
-  const pending=assets.filter(asset=>asset.status==='reserved')
-  const used=new Set(designAssetIds(design))
-  return <div className="mt-5"><h3 className="mb-2 text-sm font-medium text-forest">2. Elegí dónde usar cada foto</h3><p className="text-xs leading-6 text-muted">Biblioteca del evento · {assets.length}/20 fotos. Elegí dónde usar cada foto; también podés seleccionarlas en las secciones de ceremonia, recepción, hospedaje y vestimenta. Para borrar un archivo, primero quitalo del borrador y de la versión publicada.</p>{remove.isError?<p role="alert" className="mt-3 text-sm text-clay">{designError(remove.error)}</p>:null}<ul className="mt-3 grid grid-cols-2 gap-3">{ready.map(asset=><li key={asset.id} className="min-w-0 overflow-hidden rounded-xl border border-line bg-paper">{images[asset.id]?<img src={images[asset.id]?.small} alt={asset.alt} className="aspect-[4/3] w-full object-cover" loading="lazy" width={240} height={180} />:<div className="aspect-[4/3] bg-sand" />}<div className="p-3"><p className="line-clamp-2 text-xs leading-5 text-muted">{asset.alt}</p><button type="button" className="mt-1 min-h-11 text-left text-xs text-forest underline" onClick={()=>onCover(design.cover_asset_id===asset.id?null:asset.id)}>{design.cover_asset_id===asset.id?'Quitar de portada':'Usar de portada'}</button><button type="button" disabled={design.gallery.length>=8||design.gallery.some(photo=>photo.asset_id===asset.id)} className="block min-h-11 text-left text-xs text-forest underline" onClick={()=>onGallery(asset.id)}>{design.gallery.some(photo=>photo.asset_id===asset.id)?'Agregada a la galería':'Usar en galería'}</button><button type="button" aria-label={`Eliminar archivo ${asset.alt}`} disabled={remove.isPending||used.has(asset.id)} className="block min-h-11 text-xs text-clay underline" onClick={()=>remove.mutate(asset.id)}>Eliminar archivo</button></div></li>)}</ul>{pending.length?<ul className="mt-4 space-y-2">{pending.map(asset=><li key={asset.id} className="rounded-lg border border-line p-3"><p className="text-xs leading-6 text-muted">Carga incompleta: {asset.alt}. Si la carga se interrumpió, podés liberar este espacio.</p><button type="button" className="min-h-11 text-xs text-clay underline" disabled={remove.isPending} onClick={()=>remove.mutate(asset.id)}>Eliminar carga incompleta</button></li>)}</ul>:null}{!ready.length?<p className="py-4 text-xs leading-6 text-muted">Todavía no hay fotografías. Cargá una portada para empezar.</p>:null}</div>
+export function PhotoLibrary({
+  eventId, assets, images, design, selectedIds, coverId, onCover, onGalleryToggle,
+}: {
+  eventId: string
+  assets: DesignAsset[]
+  images: AssetImages
+  design: InvitationDesign
+  selectedIds: string[]
+  coverId: string | null
+  onCover: (id: string | null) => void
+  onGalleryToggle: (id: string) => void
+}) {
+  const cache = useQueryClient()
+  const remove = useMutation({
+    mutationFn: (id: string) => removeAsset(eventId, id),
+    onSuccess: () => cache.invalidateQueries({ queryKey: ['design-assets', eventId] }),
+  })
+  const ready = assets.filter(asset => asset.status === 'ready')
+  const pending = assets.filter(asset => asset.status === 'reserved')
+  const used = new Set([...designAssetIds(design), ...selectedIds, coverId].filter((id): id is string => Boolean(id)))
+  return <section className="mt-6" aria-labelledby="photo-library-title">
+    <div className="flex flex-wrap items-end justify-between gap-2">
+      <div><h3 id="photo-library-title" className="font-display text-xl text-forest">Fotos cargadas</h3>
+        <p className="mt-1 text-xs leading-6 text-muted">Elegí las que saldrán en la galería. Las demás quedan disponibles para la portada y otras secciones.</p></div>
+      <span className="rounded-full border border-sand px-3 py-1 text-xs text-forest">{ready.length} de 20</span>
+    </div>
+    {remove.isError ? <p role="alert" className="mt-3 text-sm text-clay">{designError(remove.error)}</p> : null}
+    {ready.length ? <ul className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+      {ready.map(asset => {
+        const order = selectedIds.indexOf(asset.id)
+        const selected = order >= 0
+        const image = images[asset.id]
+        return <li key={asset.id} className={'min-w-0 overflow-hidden rounded-xl border bg-paper ' + (selected ? 'border-forest shadow-sm' : 'border-line')}>
+          <button type="button" onClick={() => onGalleryToggle(asset.id)} disabled={!selected && selectedIds.length >= 10}
+            aria-pressed={selected} aria-label={(selected ? 'Quitar de la galería: ' : 'Agregar a la galería: ') + asset.alt}
+            className="relative block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-forest disabled:opacity-50">
+            {image ? <img src={image.small} alt="" className="aspect-square w-full object-cover" loading="lazy" width={160} height={160} /> :
+              <span className="flex aspect-square items-center justify-center bg-sand px-2 text-center text-[.65rem] text-forest">Preparando miniatura</span>}
+            <span className={'absolute left-1 top-1 rounded-full px-2 py-1 text-[.65rem] font-medium ' + (selected ? 'bg-forest text-paper' : 'bg-paper/90 text-forest')}>
+              {selected ? 'Galería ' + (order + 1) : '＋'}
+            </span>
+          </button>
+          <div className="space-y-1 p-2">
+            <p className="truncate text-[.65rem] text-muted" title={asset.alt}>{asset.alt}</p>
+            <button type="button" className="min-h-9 text-left text-[.65rem] text-forest underline" onClick={() => onCover(coverId === asset.id ? null : asset.id)}>
+              {coverId === asset.id ? '✓ Portada' : 'Usar de portada'}
+            </button>
+            <button type="button" aria-label={'Eliminar archivo ' + asset.alt} disabled={remove.isPending || used.has(asset.id)}
+              className="block min-h-9 text-[.65rem] text-clay underline disabled:opacity-40" onClick={() => remove.mutate(asset.id)}>Eliminar archivo</button>
+          </div>
+        </li>
+      })}
+    </ul> : <p className="mt-4 rounded-xl border border-dashed border-sand p-5 text-sm text-muted">Todavía no hay fotografías cargadas.</p>}
+    {pending.length ? <ul className="mt-4 space-y-2">{pending.map(asset => <li key={asset.id} className="rounded-lg border border-line p-3 text-xs text-muted">
+      Carga incompleta: {asset.alt}. <button type="button" className="min-h-9 text-clay underline" disabled={remove.isPending} onClick={() => remove.mutate(asset.id)}>Liberar espacio</button>
+    </li>)}</ul> : null}
+  </section>
 }

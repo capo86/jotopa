@@ -40,7 +40,7 @@ export function FloatingPhotoCollage({ photos, images, kenBurns, onImageError }:
         {photos.map((photo, index) => {
           const image = images[photo.asset_id]
           return (
-            <figure className="iv-floating-item" key={photo.asset_id} style={{ animationDelay: `${Math.min(index, 7) * 110}ms` }}>
+            <figure className="iv-floating-item" key={photo.asset_id} style={{ animationDelay: `${Math.min(index, 9) * 110}ms` }}>
               <div className="iv-floating-depth">
                 <div className="iv-floating-card">
                   <button type="button" className="iv-floating-open" onClick={() => openPhoto(index)} disabled={!image} aria-label={`Ampliar fotografía ${index + 1}${photo.caption ? `: ${photo.caption}` : ''}`}>
