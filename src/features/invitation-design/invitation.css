@@ -333,3 +333,15 @@
 @keyframes iv-floating-parallax{from{translate:0 -12px}to{translate:0 12px}}
 @keyframes iv-floating-ken-burns{from{transform:scale(1)}to{transform:scale(1.09)}}
 @media (prefers-reduced-motion:reduce){.iv .iv-floating-item,.iv .iv-floating-card,.iv .iv-floating-depth,.iv .iv-floating-frame .iv-photo{animation:none!important;transform:none!important;translate:none!important}}
+.iv .iv-details{
+  width:calc(100% - 32px);
+  max-width:900px;
+  margin:clamp(24px,5vw,58px) auto;
+  padding:clamp(52px,8vw,88px) clamp(24px,7vw,76px);
+  border:1px solid color-mix(in srgb,var(--iv-accent) 48%,var(--iv-paper));
+  border-radius:22px;
+  background:color-mix(in srgb,var(--iv-accent) 20%,var(--iv-paper));
+  box-shadow:0 14px 38px color-mix(in srgb,var(--iv-ink) 9%,transparent);
+}
+.iv .iv-details .iv-kicker{color:color-mix(in srgb,var(--iv-accent) 62%,var(--iv-ink))}
+.iv .iv-details .iv-prose{max-width:550px;margin-top:26px;line-height:1.9}
