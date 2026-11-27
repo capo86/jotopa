@@ -28,6 +28,9 @@ test('banking requires an explicit valid opt-in and new asset references are ded
   assert.equal(designSchema.safeParse({...design,gifts:{...design.gifts,banking:{...design.gifts.banking,enabled:true}}}).success,false)
   const filled={...design,cover_asset_id:photo,dress_photo_asset_id:photo,gifts:{...design.gifts,banking:{...design.gifts.banking,enabled:true,holder:'Host',alias:'event.fixture'}}}
   assert.equal(designSchema.safeParse(filled).success,true);assert.deepEqual(designAssetIds(filled),[photo])
+  const withExtra={...filled,gifts:{...filled.gifts,banking_extra:[{...filled.gifts.banking,enabled:true,holder:'Second host',alias:'second.fixture'}]}}
+  assert.equal(designSchema.safeParse(withExtra).success,true)
+  assert.equal(designSchema.safeParse({...withExtra,gifts:{...withExtra.gifts,banking_extra:[{...withExtra.gifts.banking_extra[0],holder:''}]}}).success,false)
 })
 test('lodging contacts reuse international normalization without changing the original draft',async()=>{
   const design={...emptyDesign('Information'),lodging:[{id:'30000000-0000-4000-8000-000000000001',name:'Hotel',photo_asset_id:null,address:'',description:'',phone:'0981 123456',whatsapp:'00 595 982 123456',booking_url:'',google_maps_url:'',waze_url:'',latitude:null,longitude:null,enabled:true}]}
