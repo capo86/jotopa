@@ -15,12 +15,12 @@ export function PhotoCollage({ photos, images, onImageError }: PhotoCollageProps
   return (
     <div className="iv-collage" role="region" aria-label="Galería de fotografías" data-paused={paused}>
       <div className="iv-collage-grid" data-moving={moving}>
-        {photos.map(photo => {
+        {photos.map((photo,index) => {
           const image = images[photo.asset_id]
           return (
             <figure className="iv-collage-card" key={photo.asset_id}>
               <div className="iv-collage-frame">
-                <AssetPhoto key={image?.large ?? photo.asset_id} image={image} {...(onImageError ? { onError: onImageError } : {})} />
+                <AssetPhoto key={photo.asset_id} image={image} thumbnail eager={index < 4} {...(onImageError ? { onError: onImageError } : {})} />
               </div>
               {photo.caption ? <figcaption>{photo.caption}</figcaption> : null}
             </figure>

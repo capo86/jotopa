@@ -49,7 +49,7 @@ export function FloatingPhotoCollage({ photos, images, kenBurns, onImageError }:
                 <div className="iv-floating-card">
                   <button type="button" className="iv-floating-open" onClick={() => openPhoto(index)} disabled={!image} aria-label={`Ampliar fotografía ${index + 1}${photo.caption ? `: ${photo.caption}` : ''}`}>
                     <span className="iv-floating-frame">
-                      <AssetPhoto key={image?.large ?? photo.asset_id} image={image} {...(onImageError ? { onError: onImageError } : {})} />
+                      <AssetPhoto key={photo.asset_id} image={image} thumbnail eager={index < 4} {...(onImageError ? { onError: onImageError } : {})} />
                     </span>
                   </button>
                   {photo.caption ? <figcaption>{photo.caption}</figcaption> : null}
