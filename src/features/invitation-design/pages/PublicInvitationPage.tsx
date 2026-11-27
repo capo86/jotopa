@@ -5,7 +5,7 @@ import {InvitationPresentation} from '../components/InvitationPresentation'
 
 export function Component(){
   const {slug=''}=useParams()
-  const query=useQuery({queryKey:['public-invitation',slug],queryFn:()=>fetchPublicInvitation(slug),enabled:/^[a-z0-9-]{1,100}$/.test(slug),retry:false,refetchInterval:45_000,refetchOnWindowFocus:true})
+  const query=useQuery({queryKey:['public-invitation',slug],queryFn:()=>fetchPublicInvitation(slug),enabled:/^[a-z0-9-]{1,100}$/.test(slug),retry:false,refetchOnWindowFocus:false})
   const musicId=query.data?.design.music_asset_id
   const music=useQuery({queryKey:['public-invitation-audio',slug,musicId],queryFn:()=>signInvitationAudio(musicId!,{slug}),enabled:Boolean(musicId),retry:false,refetchInterval:480_000})
   if(query.isPending&&query.fetchStatus!=='idle')return <main className="p-10 text-center text-forest" role="status">Preparando la invitación…</main>

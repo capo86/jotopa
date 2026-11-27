@@ -13,7 +13,7 @@ const GuestWall=lazy(()=>import('../../wall/guest').then(module=>({default:modul
 export function InvitationContent({token,visitId}:{token:string;visitId:string}) {
   const cache=useQueryClient()
   const query=useQuery({queryKey:['personal-invitation'],queryFn:({signal})=>readInvitation(token,signal,visitId),retry:false,staleTime:10_000,gcTime:0,refetchOnWindowFocus:false,refetchOnReconnect:false})
-  const images=useQuery({queryKey:['personal-invitation-images'],queryFn:()=>publicAssetImages(token),enabled:query.data?.presentation!==null,retry:false,staleTime:40_000,gcTime:0,refetchInterval:query.data?.presentation?45_000:false,refetchOnWindowFocus:true})
+  const images=useQuery({queryKey:['personal-invitation-images'],queryFn:()=>publicAssetImages(token),enabled:query.data?.presentation!==null,retry:false,staleTime:40_000,gcTime:0,refetchOnWindowFocus:false})
   const out=useMutation({mutationFn:()=>optOutInvitation(token),retry:false,gcTime:0,onSuccess:data=>cache.setQueryData(['personal-invitation'],data)})
   const data=query.data
   const refetch=query.refetch
