@@ -735,3 +735,7 @@ E cerrará el registro público, restringirá la creación de eventos y habilita
 `AGENTS.md` quedó intacto. No se realizaron despliegues ni se modificó SIGA.
 
 La sección Regalos admite varios datos de transferencia. Cada cuenta se habilita por separado y sus datos solo aparecen al publicar la invitación con la sección activa.
+
+## Audio y fotos de la invitación
+
+El editor permite cargar MP3 o M4A de hasta 8 MB al bucket privado `invitation-audio`. La selección se guarda en el borrador y cambia para los invitados al publicar. El audio se entrega mediante direcciones firmadas. La biblioteca de fotos admite seleccionar varios archivos a la vez para la galería o la biblioteca, sin completar un título antes de subirlos; la portada sigue siendo una foto por vez.
