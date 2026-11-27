@@ -12,7 +12,7 @@ import {FloatingPhotoCollage} from './FloatingPhotoCollage'
 import {InvitationMusic} from './InvitationMusic'
 import '../invitation.css'
 
-export function InvitationPresentation({design,event,guestName,partySize=1,images,musicUrl,rsvp,footer,personalDetails,wall,onImageError}:{design:InvitationDesign;event:PresentationEvent;guestName:string;partySize?:number;images:AssetImages;musicUrl?:string;rsvp:ReactNode;footer?:ReactNode;personalDetails?:ReactNode;wall?:ReactNode;onImageError?:()=>void}){
+export function InvitationPresentation({design,event,guestName,partySize=1,images,musicUrl,rsvp,footer,personalDetails,wall,onImageError}:{design:InvitationDesign;event:PresentationEvent;guestName:string;partySize?:number;images:AssetImages;musicUrl?:string|undefined;rsvp:ReactNode;footer?:ReactNode;personalDetails?:ReactNode;wall?:ReactNode;onImageError?:()=>void}){
   const palette=PALETTES[design.palette]
   const mix=design.palette_mix
   const styles={'--iv-paper':palette.paper,'--iv-ink':palette.ink,'--iv-accent':palette.accent,'--iv-soft':palette.soft,'--iv-mix-ink':mix[0]+'%','--iv-mix-soft-end':mix[0]+mix[1]+'%'} as CSSProperties
