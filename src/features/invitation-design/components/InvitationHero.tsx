@@ -3,7 +3,7 @@ import {AssetPhoto} from './AssetPhoto'
 
 export function InvitationHero({design,event,image,onImageError}:{design:InvitationDesign;event:PresentationEvent;image:AssetImage|undefined;onImageError?:()=>void}){
   const date=new Intl.DateTimeFormat('es-PY',{day:'2-digit',month:'long',year:'numeric',timeZone:event.timezone}).format(new Date(event.starts_at))
-  const photo=<AssetPhoto key={image?.large??'empty'} image={image} cover focus={design.cover_focus} {...(onImageError?{onError:onImageError}:{})} />
+  const photo=<AssetPhoto key={design.cover_asset_id??'empty'} image={image} cover focus={design.cover_focus} {...(onImageError?{onError:onImageError}:{})} />
   const names=design.names||event.title
   const first=design.sections.find(section=>section.enabled)?.id
   const response=design.sections.some(section=>section.id==='rsvp'&&section.enabled)?'rsvp':first
