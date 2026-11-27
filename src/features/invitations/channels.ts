@@ -14,6 +14,6 @@ export function renderMessage(payload:MessagePayload,appUrl:string):Personalized
 export const whatsappChannel:MessageChannel={id:'whatsapp',createUrl(message){
   if(!message.phone || !/^\+[1-9][0-9]{7,14}$/.test(message.phone))throw new Error('invitation_invalid_phone')
   try{if(normalizePhone(message.phone)!==message.phone)throw new Error('invalid')}catch{throw new Error('invitation_invalid_phone')}
-  return `https://wa.me/${message.phone.slice(1)}?text=${encodeURIComponent(message.text)}`
+  return `https://api.whatsapp.com/send?phone=${message.phone.slice(1)}&text=${encodeURIComponent(message.text)}`
 }}
 export const linkChannel:MessageChannel={id:'link',createUrl:message=>message.link}
