@@ -12,11 +12,12 @@ import {FloatingPhotoCollage} from './FloatingPhotoCollage'
 import {InvitationMusic} from './InvitationMusic'
 import '../invitation.css'
 
-export function InvitationPresentation({design,event,guestName,partySize=1,images,rsvp,footer,personalDetails,wall,onImageError}:{design:InvitationDesign;event:PresentationEvent;guestName:string;partySize?:number;images:AssetImages;rsvp:ReactNode;footer?:ReactNode;personalDetails?:ReactNode;wall?:ReactNode;onImageError?:()=>void}){
+export function InvitationPresentation({design,event,guestName,partySize=1,images,musicUrl,rsvp,footer,personalDetails,wall,onImageError}:{design:InvitationDesign;event:PresentationEvent;guestName:string;partySize?:number;images:AssetImages;musicUrl?:string;rsvp:ReactNode;footer?:ReactNode;personalDetails?:ReactNode;wall?:ReactNode;onImageError?:()=>void}){
   const palette=PALETTES[design.palette]
   const mix=design.palette_mix
   const styles={'--iv-paper':palette.paper,'--iv-ink':palette.ink,'--iv-accent':palette.accent,'--iv-soft':palette.soft,'--iv-mix-ink':mix[0]+'%','--iv-mix-soft-end':mix[0]+mix[1]+'%'} as CSSProperties
   const isGroup=partySize>1
+  const soundtrack=design.music_asset_id?musicUrl:design.music_url
   const active=(id:string)=>design.sections.some(section=>section.id===id&&section.enabled)
   const renderSection=(id:InvitationDesign['sections'][number]['id'])=>{
     switch(id){
@@ -32,5 +33,5 @@ export function InvitationPresentation({design,event,guestName,partySize=1,image
       case 'closing':return <section className="iv-section iv-closing"><span className="iv-ornament" aria-hidden="true">✳</span><p className="iv-kicker">{isGroup?'ESTE DÍA TAMBIÉN ES DE USTEDES':'ESTE DÍA TAMBIÉN ES TUYO'}</p><h2>{design.closing||'Qué lindo será encontrarnos.'}</h2><p className="iv-closing-signature">{design.names||event.title}</p></section>
     }
   }
-  return <div className={`iv iv-${design.template} iv-font-${design.font_pair}`} style={styles}><div className="iv-page">{design.music_url?<InvitationMusic key={design.music_url} url={design.music_url} />:null}<InvitationHero design={design} event={event} image={design.cover_asset_id?images[design.cover_asset_id]:undefined} {...(onImageError?{onError:onImageError}:{})} />{personalDetails}{design.sections.filter(section=>section.enabled).map(section=><div key={section.id} id={`iv-${section.id}`}>{section.id==='closing'?wall:null}{renderSection(section.id)}</div>)}{!active('closing')?wall:null}<footer className="iv-footer">{footer}<a href="/" className="iv-brand">jotopa<span>.</span></a><p>Encuentros que se convierten en recuerdos.</p></footer></div></div>
+  return <div className={`iv iv-${design.template} iv-font-${design.font_pair}`} style={styles}><div className="iv-page">{soundtrack?<InvitationMusic key={soundtrack} url={soundtrack} />:null}<InvitationHero design={design} event={event} image={design.cover_asset_id?images[design.cover_asset_id]:undefined} {...(onImageError?{onError:onImageError}:{})} />{personalDetails}{design.sections.filter(section=>section.enabled).map(section=><div key={section.id} id={`iv-${section.id}`}>{section.id==='closing'?wall:null}{renderSection(section.id)}</div>)}{!active('closing')?wall:null}<footer className="iv-footer">{footer}<a href="/" className="iv-brand">jotopa<span>.</span></a><p>Encuentros que se convierten en recuerdos.</p></footer></div></div>
 }
