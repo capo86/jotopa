@@ -277,10 +277,10 @@
 .iv .iv-floating-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:start;column-gap:clamp(8px,2vw,22px);row-gap:clamp(18px,4vw,48px);padding:20px 4px 30px}
 .iv .iv-floating-item{grid-column:span 7;min-width:0;margin:0;opacity:1;position:relative}
 .iv .iv-floating-item:nth-child(4n+2),.iv .iv-floating-item:nth-child(4n+3){grid-column:span 5}
-.iv .iv-floating-item:nth-child(4n+2){margin-top:clamp(45px,9vw,105px);margin-left:-10px;z-index:2}
-.iv .iv-floating-item:nth-child(4n+3){margin-top:-24px;z-index:2}
-.iv .iv-floating-item:nth-child(4n+4){margin-top:clamp(22px,5vw,60px)}
-.iv .iv-floating-item:last-child:nth-child(odd){grid-column:3 / 11}
+.iv .iv-floating-item:nth-child(4n+2){margin-top:clamp(88px,17vw,150px);margin-left:-28%;z-index:2}
+.iv .iv-floating-item:nth-child(4n+3){margin-top:clamp(-95px,-14vw,-55px);margin-left:12%;z-index:3}
+.iv .iv-floating-item:nth-child(4n+4){margin-top:clamp(35px,8vw,85px);margin-left:-13%;z-index:1}
+.iv .iv-floating-item:last-child:nth-child(odd){grid-column:3 / 11;justify-self:center;width:88%}
 .iv .iv-floating-depth{min-width:0}
 .iv .iv-floating-card{--iv-float-y:10px;padding:clamp(6px,1.3vw,12px);background:var(--iv-paper);color:var(--iv-ink);box-shadow:0 12px 35px color-mix(in srgb,var(--iv-ink) 19%,transparent),0 2px 8px #00000012;rotate:-3deg}
 .iv .iv-floating-item:nth-child(even) .iv-floating-card{--iv-float-y:-11px;rotate:3deg}
@@ -289,8 +289,10 @@
 .iv .iv-floating-open:disabled{cursor:default}
 .iv .iv-floating-open:focus-visible{outline:3px solid var(--iv-accent);outline-offset:5px}
 .iv .iv-floating-frame{display:block;aspect-ratio:4/5;overflow:hidden}
-.iv .iv-floating-item:nth-child(4n+1) .iv-floating-frame{aspect-ratio:5/4}
-.iv .iv-floating-item:nth-child(4n+4) .iv-floating-frame{aspect-ratio:1}
+.iv .iv-floating-item:nth-child(4n+1) .iv-floating-frame{aspect-ratio:4/5}
+.iv .iv-floating-item:nth-child(4n+2) .iv-floating-frame{aspect-ratio:1}
+.iv .iv-floating-item:nth-child(4n+3) .iv-floating-frame{aspect-ratio:1}
+.iv .iv-floating-item:nth-child(4n+4) .iv-floating-frame{aspect-ratio:5/4}
 .iv .iv-floating-frame .iv-photo{width:100%;height:100%;object-fit:cover}
 .iv .iv-floating-frame .iv-photo-placeholder{height:100%;min-height:0;padding:10px;gap:5px}
 .iv .iv-floating-frame .iv-photo-placeholder span{font-size:1.5rem}
