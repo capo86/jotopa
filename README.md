@@ -733,3 +733,5 @@ El siguiente paso es **revisar la Etapa D y sus capturas**, antes de autorizar E
 E cerrará el registro público, restringirá la creación de eventos y habilitará administración/clientes autorizados. El panel ampliado y los recordatorios con horarios, límites y bajas quedan en F. No se implementaron esas funciones, álbum colaborativo ni logística avanzada. **No se continuará automáticamente a E.**
 
 `AGENTS.md` quedó intacto. No se realizaron despliegues ni se modificó SIGA.
+
+La sección Regalos admite varios datos de transferencia. Cada cuenta se habilita por separado y sus datos solo aparecen al publicar la invitación con la sección activa.
