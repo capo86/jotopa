@@ -309,6 +309,7 @@
   .iv .iv-floating-item:nth-child(3n+2) .iv-floating-card{animation-duration:10s;animation-delay:-3s}
   .iv .iv-floating-item:nth-child(3n) .iv-floating-card{animation-duration:9s;animation-delay:-5s}
   .iv .iv-floating-gallery[data-visible=true] .iv-floating-card{animation-play-state:running}
+  .iv .iv-floating-item:hover .iv-floating-card,.iv .iv-floating-item:focus-within .iv-floating-card{animation-play-state:paused}
   .iv .iv-floating-gallery[data-ken-burns=true][data-visible=true] .iv-floating-frame .iv-photo{animation:iv-floating-ken-burns 18s ease-in-out infinite alternate}
 }
 @supports (animation-timeline:view()){
