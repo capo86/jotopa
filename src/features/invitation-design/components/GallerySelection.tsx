@@ -24,7 +24,7 @@ export function GallerySelection({
         <h3 id="gallery-selection-title" className="mt-2 font-display text-2xl text-forest">Tu galería, en este orden.</h3>
         <p className="mt-2 text-xs leading-6 text-muted">Estas fotos saldrán al publicar. {style === 'floating' ? 'Aparecerán como un collage en movimiento.' : 'Aparecerán en el collage.'}</p>
       </div>
-      <span className="rounded-full border border-forest px-3 py-1 text-xs font-medium text-forest">{photos.length} / 10</span>
+      <span className="rounded-full border border-forest px-3 py-1 text-xs font-medium text-forest">{photos.length} / 20</span>
     </div>
     {photos.length ? <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {photos.map((photo, index) => {

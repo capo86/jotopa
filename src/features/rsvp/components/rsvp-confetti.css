@@ -1,0 +1,11 @@
+.rsvp-confetti{position:fixed;inset:0;z-index:100;overflow:hidden;pointer-events:none}
+.rsvp-confetti-piece{position:absolute;top:-20px;width:9px;height:15px;border-radius:2px;opacity:0;animation:rsvp-confetti-fall ease-in forwards}
+.rsvp-confetti-piece:nth-child(3n){width:7px;height:7px;border-radius:50%}
+.rsvp-confetti-piece:nth-child(4n){width:12px;height:5px}
+@keyframes rsvp-confetti-fall{
+  0%{opacity:0;transform:translate3d(0,-10vh,0) rotate(0deg)}
+  8%{opacity:1}
+  85%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--rsvp-drift),110vh,0) rotate(720deg)}
+}
+@media(prefers-reduced-motion:reduce){.rsvp-confetti{display:none}}

@@ -11,13 +11,13 @@ test('visual design validation bounds content, section order, coordinates and sh
   assert.equal(designSchema.safeParse({...design,sections:[...design.sections].reverse()}).success,true)
   for(const invalid of [{...design,template:'unknown'},{...design,palette:'#fff'},{...design,names:'x'.repeat(161)},{...design,welcome:'a'.repeat(64)},{...design,sections:design.sections.slice(1)},{...design,gallery:[{asset_id:'invalid',caption:''}]},{...design,schedule:[{id:'3d959172-8cbd-4f97-a087-55cb37a2a152',label:'Arrival',venue:'Place',address:'Asuncion',starts_at:'invalid',latitude:null,longitude:null}]}])assert.equal(designSchema.safeParse(invalid).success,false)
 })
-test('gallery allows ten selected photos and rejects an eleventh',()=>{
+test('gallery allows twenty selected photos and rejects a twenty-first',()=>{
   const design=emptyDesign('Encuentro')
-  const gallery=Array.from({length:11},(_,index)=>({
+  const gallery=Array.from({length:21},(_,index)=>({
     asset_id:'00000000-0000-4000-8000-'+String(index+1).padStart(12,'0'),
     caption:'',
   }))
-  assert.equal(designSchema.safeParse({...design,gallery:gallery.slice(0,10)}).success,true)
+  assert.equal(designSchema.safeParse({...design,gallery:gallery.slice(0,20)}).success,true)
   assert.equal(designSchema.safeParse({...design,gallery}).success,false)
 })
 test('sage and rose palette and direct HTTPS audio links are validated',()=>{
