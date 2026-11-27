@@ -6,8 +6,8 @@ import {isAllowedLink,locationLinks} from './links.ts'
 
 test('legacy invitation data upgrades without enabling new sections or losing existing content',()=>{
   const current=emptyDesign('Existing event')
-  const {gifts:unusedGifts,lodging:unusedLodging,dress_photo_asset_id:unusedPhoto,music_url:unusedMusic,palette_mix:unusedMix,cover_quote:unusedQuote,...legacyFields}=current
-  assert.ok(unusedGifts&&unusedLodging&&unusedPhoto===null&&unusedMusic===''&&unusedMix.reduce((total,part)=>total+part,0)===100&&unusedQuote==='')
+  const {gifts:unusedGifts,lodging:unusedLodging,dress_photo_asset_id:unusedPhoto,music_url:unusedMusic,palette_mix:unusedMix,cover_quote:unusedQuote,cover_quote_title:unusedTitle,cover_quote_signature:unusedSignature,...legacyFields}=current
+  assert.ok(unusedGifts&&unusedLodging&&unusedPhoto===null&&unusedMusic===''&&unusedMix.reduce((total,part)=>total+part,0)===100&&unusedQuote===''&&unusedTitle===''&&unusedSignature==='')
   const upgraded=designSchema.parse({...legacyFields,version:1,sections:current.sections.filter(section=>!['gifts','lodging'].includes(section.id))})
   assert.equal(upgraded.version,2);assert.equal(upgraded.names,current.names);assert.equal(upgraded.sections.length,10)
   assert.equal(upgraded.gifts.banking.enabled,false);assert.equal(upgraded.sections.find(section=>section.id==='lodging')?.enabled,false)
