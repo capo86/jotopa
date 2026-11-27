@@ -7,7 +7,8 @@ export function renderMessage(payload:MessagePayload,appUrl:string):Personalized
   const link=personalInvitationUrl(appUrl,payload.token)
   const date=(value:string)=>new Intl.DateTimeFormat('es-PY',{dateStyle:'long',timeStyle:'short',timeZone:payload.timezone}).format(new Date(value))
   const variables:Record<string,string>={nombre:payload.full_name,link,fecha:date(payload.starts_at),lugar:payload.location_label || 'Lugar a confirmar',fecha_limite:date(payload.rsvp_deadline)}
-  const text=payload.body.replace(/\{(nombre|link|fecha|lugar|fecha_limite)\}/g,(_match,key:string)=>variables[key] ?? '')
+  const body=payload.party_size>1?payload.body.replace(/\bcon vos\b/gi,match=>match===match.toUpperCase()?'CON USTEDES':match[0]==='C'?'Con ustedes':'con ustedes'):payload.body
+  const text=body.replace(/\{(nombre|link|fecha|lugar|fecha_limite)\}/g,(_match,key:string)=>variables[key] ?? '')
   if(text.length>8000) throw new Error('message_too_long')
   return {text,link,phone:payload.phone}
 }
