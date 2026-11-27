@@ -18,7 +18,7 @@
     "preview": "vite preview",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit && npm run typecheck:edge",
-    "typecheck:edge": "npm exec --yes --package=deno@2.9.6 -- deno check --no-config supabase/functions/invite-member/index.ts supabase/functions/invitation-assets/index.ts supabase/functions/wall-media/index.ts supabase/functions/create-event-user/index.ts",
+    "typecheck:edge": "npm exec --yes --package=deno@2.9.6 -- deno check --no-config supabase/functions/invite-member/index.ts supabase/functions/invitation-assets/index.ts supabase/functions/wall-media/index.ts supabase/functions/create-event-user/index.ts supabase/functions/invitation-audio/index.ts",
     "test": "node --experimental-strip-types --test src/lib/supabase-connection.test.ts src/features/auth/auth.test.ts src/features/events/events.test.ts src/features/guests/guests.test.ts src/features/rsvp/rsvp.test.ts src/features/invitations/invitations.test.ts src/features/invitation-design/design.test.ts src/features/invitation-design/information.test.ts supabase/functions/invite-member/handler.test.ts src/features/info/attendance.test.ts src/features/wall/wall.test.ts src/features/wall/feed.test.ts src/features/wall/presentation.test.ts",
     "test:auth": "node --test scripts/auth.integration.test.mjs",
     "test:rls": "node scripts/test-rls.mjs",

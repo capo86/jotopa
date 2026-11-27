@@ -165,7 +165,7 @@ Todas las tablas con `id uuid`, `created_at`, y RLS activada.
 **Experiencia (fases posteriores)**
 - `wall_posts`, `wall_post_media`, `photos`, `announcements` (como en versiones previas del diseño)
 
-Buckets de Storage: privados, URLs firmadas: `wall-media`, `wall-audio`, `gallery`, `event-assets`.
+Buckets de Storage: privados, URLs firmadas: `wall-media`, `wall-audio`, `gallery`, `event-assets` y `invitation-audio`.
 
 ## 8. Seguimiento de invitaciones y recordatorios (núcleo)
 
