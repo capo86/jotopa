@@ -100,7 +100,7 @@ begin
 exception when others then
   raise exception 'invalid_design' using errcode='22023';
 end;
-$$$;
+$$;
 
 create or replace function private.public_invitation_design(input jsonb)
 returns jsonb language plpgsql immutable set search_path='' as $$
