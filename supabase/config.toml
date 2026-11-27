@@ -446,3 +446,6 @@ verify_jwt = false
 [functions.create-event-user]
 # The handler validates the caller's real Auth session and platform role.
 verify_jwt = false
+
+[functions.invitation-audio]
+verify_jwt = false
