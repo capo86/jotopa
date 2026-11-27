@@ -34,8 +34,13 @@ export default {
     if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405 })
     const url = new URL(request.url)
     const token = url.searchParams.get('token') ?? ''
+    const pageHeaders = new Headers()
+    for (const name of ['cookie', 'x-vercel-protection-bypass']) {
+      const value = request.headers.get(name)
+      if (value) pageHeaders.set(name, value)
+    }
     const [page, preview] = await Promise.all([
-      fetch(new URL('/index.html', url.origin), { signal: AbortSignal.timeout(5000) }),
+      fetch(new URL('/index.html', url.origin), { headers: pageHeaders, signal: AbortSignal.timeout(5000) }),
       getPreview(token),
     ])
     if (!page.ok) return new Response('No pudimos abrir la invitación.', { status: 503 })
@@ -59,7 +64,9 @@ export default {
       '<meta name="twitter:title" content="' + escapeMeta(title) + '" />',
       '<meta name="twitter:description" content="' + escapeMeta(description) + '" />',
     ].join('\n    ')
-    const html = (await page.text())
+    const source = await page.text()
+    if (!source.includes('<div id="root"></div>')) return new Response('No pudimos abrir la invitación.', { status: 503 })
+    const html = source
       .replace(/<title>[^<]*<\/title>/, '<title>' + escapeMeta(title) + '</title>')
       .replace(/<meta name="description" content="[^"]*" \/>/, '<meta name="description" content="' + escapeMeta(description) + '" />')
       .replace('</head>', '    ' + tags + '\n  </head>')
