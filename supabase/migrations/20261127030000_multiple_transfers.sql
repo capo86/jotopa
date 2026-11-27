@@ -100,10 +100,10 @@ begin
 exception when others then
   raise exception 'invalid_design' using errcode='22023';
 end;
-$$;
+$;
 
 create or replace function private.public_invitation_design(input jsonb)
-returns jsonb language plpgsql immutable set search_path='' as $
+returns jsonb language plpgsql immutable set search_path='' as 
 declare output jsonb:=input; section text;
 begin
   for section in select s->>'id' from jsonb_array_elements(input->'sections') s where coalesce((s->>'enabled')::boolean,false)=false loop
@@ -130,10 +130,10 @@ begin
   end if;
   return output;
 end;
-$;
+;
 
 create or replace function private.public_invitation_design(p_event_id uuid)
-returns jsonb language plpgsql stable set search_path='' as $
+returns jsonb language plpgsql stable set search_path='' as 
 declare design jsonb;result jsonb;gifts jsonb;banking jsonb;empty_banking jsonb:='{"enabled":false,"bank_name":"","holder":"","account":"","alias":"","notes":""}';
 begin
   select published into design from public.event_invitation_designs where event_id=p_event_id;
@@ -153,6 +153,6 @@ begin
     'lodging',case when private.invitation_section_enabled(design,'lodging') then (select coalesce(jsonb_agg(item),'[]'::jsonb) from jsonb_array_elements(design->'lodging') item where item->'enabled'='true'::jsonb) else '[]'::jsonb end,
     'dress_photo_asset_id',case when private.invitation_section_enabled(design,'dress') then design->'dress_photo_asset_id' else 'null'::jsonb end);
 end;
-$;
+;
 
 commit;
