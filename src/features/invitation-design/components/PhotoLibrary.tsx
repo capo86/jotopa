@@ -27,7 +27,7 @@ export function PhotoLibrary({
   return <section className="mt-6" aria-labelledby="photo-library-title">
     <div className="flex flex-wrap items-end justify-between gap-2">
       <div><h3 id="photo-library-title" className="font-display text-xl text-forest">Fotos cargadas</h3>
-        <p className="mt-1 text-xs leading-6 text-muted">Tocá “Agregar” sobre una foto para mostrarla en la galería. Podés guardar hasta 20 fotos y elegir hasta 10 para la galería.</p></div>
+        <p className="mt-1 text-xs leading-6 text-muted">Tocá “Agregar” sobre una foto para mostrarla en la galería. Podés guardar hasta 20 fotos y elegir hasta 20 para la galería.</p></div>
       <span className="rounded-full border border-sand px-3 py-1 text-xs text-forest">{ready.length} fotos guardadas</span>
     </div>
     {ready.length ? <p className="mt-3 text-xs font-medium text-forest">{selectedReadyCount} en la galería · {ready.length - selectedReadyCount} sin elegir</p> : null}
@@ -38,7 +38,7 @@ export function PhotoLibrary({
         const selected = order >= 0
         const image = images[asset.id]
         return <li key={asset.id} className={'min-w-0 overflow-hidden rounded-xl border bg-paper ' + (selected ? 'border-forest shadow-sm' : 'border-line')}>
-          <button type="button" onClick={() => onGalleryToggle(asset.id)} disabled={!selected && selectedIds.length >= 10}
+          <button type="button" onClick={() => onGalleryToggle(asset.id)} disabled={!selected && selectedIds.length >= 20}
             aria-pressed={selected} aria-label={(selected ? 'Quitar de la galería: ' : 'Agregar a la galería: ') + asset.alt}
             className="relative block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-forest disabled:opacity-50">
             {image ? <img src={image.small} alt="" className="aspect-square w-full object-cover" loading="lazy" width={160} height={160} /> :
