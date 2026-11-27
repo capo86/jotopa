@@ -22,13 +22,15 @@ export function PhotoLibrary({
   })
   const ready = assets.filter(asset => asset.status === 'ready')
   const pending = assets.filter(asset => asset.status === 'reserved')
+  const selectedReadyCount = ready.filter(asset => selectedIds.includes(asset.id)).length
   const used = new Set([...designAssetIds(design), ...selectedIds, coverId].filter((id): id is string => Boolean(id)))
   return <section className="mt-6" aria-labelledby="photo-library-title">
     <div className="flex flex-wrap items-end justify-between gap-2">
       <div><h3 id="photo-library-title" className="font-display text-xl text-forest">Fotos cargadas</h3>
-        <p className="mt-1 text-xs leading-6 text-muted">Elegí las que saldrán en la galería. Las demás quedan disponibles para la portada y otras secciones.</p></div>
-      <span className="rounded-full border border-sand px-3 py-1 text-xs text-forest">{ready.length} de 20</span>
+        <p className="mt-1 text-xs leading-6 text-muted">Tocá “Agregar” sobre una foto para mostrarla en la galería. Podés guardar hasta 20 fotos y elegir hasta 10 para la galería.</p></div>
+      <span className="rounded-full border border-sand px-3 py-1 text-xs text-forest">{ready.length} fotos guardadas</span>
     </div>
+    {ready.length ? <p className="mt-3 text-xs font-medium text-forest">{selectedReadyCount} en la galería · {ready.length - selectedReadyCount} sin elegir</p> : null}
     {remove.isError ? <p role="alert" className="mt-3 text-sm text-clay">{designError(remove.error)}</p> : null}
     {ready.length ? <ul className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
       {ready.map(asset => {
@@ -42,7 +44,7 @@ export function PhotoLibrary({
             {image ? <img src={image.small} alt="" className="aspect-square w-full object-cover" loading="lazy" width={160} height={160} /> :
               <span className="flex aspect-square items-center justify-center bg-sand px-2 text-center text-[.65rem] text-forest">Preparando miniatura</span>}
             <span className={'absolute left-1 top-1 rounded-full px-2 py-1 text-[.65rem] font-medium ' + (selected ? 'bg-forest text-paper' : 'bg-paper/90 text-forest')}>
-              {selected ? 'Galería ' + (order + 1) : '＋'}
+              {selected ? 'Galería ' + (order + 1) : '＋ Agregar'}
             </span>
           </button>
           <div className="space-y-1 p-2">
