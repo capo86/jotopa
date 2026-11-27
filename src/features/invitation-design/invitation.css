@@ -306,13 +306,14 @@
 .iv .iv-floating-close{position:absolute;top:2px;right:8px;min-width:44px;min-height:44px;border:0;background:none;color:inherit;font-size:2rem;line-height:1;cursor:pointer}
 .iv .iv-floating-close:focus-visible{outline:2px solid var(--iv-accent);outline-offset:2px}
 @media (prefers-reduced-motion:no-preference){
+  .iv .iv-floating-item:not([data-visible=true]){opacity:0}
   .iv .iv-floating-item[data-visible=true]{animation:iv-floating-enter .85s ease-out both}
   .iv .iv-floating-card{animation:iv-floating-drift 8s ease-in-out infinite alternate;animation-play-state:paused}
   .iv .iv-floating-item:nth-child(3n+2) .iv-floating-card{animation-duration:10s;animation-delay:-3s}
   .iv .iv-floating-item:nth-child(3n) .iv-floating-card{animation-duration:9s;animation-delay:-5s}
   .iv .iv-floating-item[data-visible=true] .iv-floating-card{animation-play-state:running}
   .iv .iv-floating-item:hover .iv-floating-card,.iv .iv-floating-item:focus-within .iv-floating-card{animation-play-state:paused}
-  .iv .iv-floating-gallery[data-ken-burns=true][data-visible=true] .iv-floating-frame .iv-photo{animation:iv-floating-ken-burns 18s ease-in-out infinite alternate}
+  .iv .iv-floating-gallery[data-ken-burns=true] .iv-floating-item[data-visible=true] .iv-floating-frame .iv-photo{animation:iv-floating-ken-burns 18s ease-in-out infinite alternate}
 }
 @supports (animation-timeline:view()){
   @media (prefers-reduced-motion:no-preference){
