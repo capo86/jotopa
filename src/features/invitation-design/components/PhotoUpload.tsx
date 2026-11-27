@@ -1,9 +1,91 @@
-import {useState} from 'react'
-import {useAssetUpload} from '../hooks'
-import {designError} from '../models'
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { uploadAsset } from '../api'
+import { designError } from '../models'
 
-export function PhotoUpload({eventId,galleryFull,onUploaded,onBusy}:{eventId:string;galleryFull:boolean;onUploaded:(id:string,kind:'library'|'cover'|'gallery')=>void;onBusy:(busy:boolean)=>void}){
-  const [alt,setAlt]=useState('')
-  const upload=useAssetUpload<{file:File;kind:'library'|'cover'|'gallery'}>(eventId,alt,(id,variables)=>{onUploaded(id,variables.kind);setAlt('')},onBusy)
-  return <div className="rounded-xl border border-sand bg-canvas p-4"><p className="mb-3 text-sm font-medium text-forest">1. Cargá una fotografía</p><label htmlFor="photo-alt" className="block text-xs font-medium text-forest">Descripción de la nueva fotografía</label><input id="photo-alt" className="form-input mt-2" maxLength={240} value={alt} onChange={event=>setAlt(event.target.value)} placeholder="Describí quiénes aparecen o qué se ve" /><p className="mt-2 text-xs leading-6 text-muted">Escribí una descripción y elegí el archivo. JPG, PNG o WebP · hasta 10 MB y 24 megapíxeles. Optimizamos la foto sin conservar los metadatos originales.</p><div className="mt-3 flex flex-wrap gap-3">{(['library','cover','gallery'] as const).map(kind=><label key={kind} className={`relative inline-flex min-h-11 items-center rounded-lg border border-sand bg-paper px-4 text-xs text-forest has-focus-visible:outline-2 ${upload.isPending||!alt.trim()||(kind==='gallery'&&galleryFull)?'cursor-not-allowed opacity-50':'cursor-pointer'}`}>{kind==='library'?'Cargar a la biblioteca':kind==='cover'?'Cargar portada':'Agregar a la galería'}<input aria-label={kind==='library'?'Foto para la biblioteca':kind==='cover'?'Foto de portada':'Foto para la galería'} type="file" accept="image/jpeg,image/png,image/webp" disabled={upload.isPending||!alt.trim()||(kind==='gallery'&&galleryFull)} className="absolute inset-0 w-full cursor-pointer opacity-0" onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file){onBusy(true);upload.mutate({file,kind})}}} /></label>)}</div>{upload.isPending?<p role="status" className="mt-4 text-sm text-forest">Optimizando y guardando tu fotografía…</p>:null}{upload.isError?<p role="alert" className="mt-4 text-sm leading-6 text-clay">{designError(upload.error)}</p>:null}</div>
+type PhotoKind = 'library' | 'cover' | 'gallery'
+type Batch = { files: File[]; kind: PhotoKind }
+type BatchResult = { ids: string[]; failed: number; lastError: unknown }
+
+function photoDescription(file: File) {
+  const stem = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
+  if (!stem || /^(img|dsc|photo|foto|image)\s*\d+$/i.test(stem) || /[a-f0-9]{64}/i.test(stem))
+    return 'Fotografía del evento'
+  return 'Fotografía del evento: ' + stem.slice(0, 210)
+}
+
+export function PhotoUpload({
+  eventId, galleryCount, libraryCount, onUploaded, onBusy,
+}: {
+  eventId: string
+  galleryCount: number
+  libraryCount: number
+  onUploaded: (id: string, kind: PhotoKind) => void
+  onBusy: (busy: boolean) => void
+}) {
+  const cache = useQueryClient()
+  const [progress, setProgress] = useState('')
+  const [notice, setNotice] = useState('')
+  const upload = useMutation({
+    mutationFn: async ({ files }: Batch): Promise<BatchResult> => {
+      const ids: string[] = []
+      let failed = 0
+      let lastError: unknown = null
+      for (const [index, file] of files.entries()) {
+        setProgress('Cargando ' + (index + 1) + ' de ' + files.length + ' fotografías…')
+        try {
+          ids.push(await uploadAsset(eventId, photoDescription(file), file))
+        } catch (error) {
+          failed += 1
+          lastError = error
+        }
+      }
+      return { ids, failed, lastError }
+    },
+    onSuccess: async (result, variables) => {
+      for (const id of result.ids) onUploaded(id, variables.kind)
+      await cache.invalidateQueries({ queryKey: ['design-assets', eventId] })
+      setNotice(result.failed
+        ? result.ids.length + ' fotos cargadas; ' + result.failed + ' no se pudieron cargar. ' + designError(result.lastError)
+        : result.ids.length + (result.ids.length === 1 ? ' foto cargada.' : ' fotos cargadas.'))
+    },
+    onSettled: () => { setProgress(''); onBusy(false) },
+    retry: false,
+  })
+  const choose = (files: File[], kind: PhotoKind) => {
+    setNotice('')
+    if (!files.length) return
+    if (files.length > 20 - libraryCount) {
+      setNotice('La biblioteca admite hasta 20 fotos. Elegí menos archivos o eliminá fotos que ya no usás.')
+      return
+    }
+    if (kind === 'gallery' && files.length > 8 - galleryCount) {
+      setNotice('La galería admite hasta 8 fotos. Elegí menos archivos para esta carga.')
+      return
+    }
+    onBusy(true)
+    upload.mutate({ files, kind })
+  }
+  return <div className="rounded-xl border border-sand bg-canvas p-4">
+    <p className="mb-2 text-sm font-medium text-forest">1. Cargá tus fotografías</p>
+    <p className="text-xs leading-6 text-muted">Seleccioná varias fotos para la biblioteca o la galería, sin escribir títulos. Para la portada se elige una foto. JPG, PNG o WebP · hasta 10 MB y 24 megapíxeles por archivo.</p>
+    <div className="mt-4 flex flex-wrap gap-3">
+      {(['library', 'cover', 'gallery'] as const).map(kind => {
+        const disabled = upload.isPending || libraryCount >= 20 || (kind === 'gallery' && galleryCount >= 8)
+        const label = kind === 'library' ? 'Cargar a la biblioteca' : kind === 'cover' ? 'Cargar portada' : 'Agregar a la galería'
+        return <label key={kind} className={'relative inline-flex min-h-11 items-center rounded-lg border border-sand bg-paper px-4 text-xs text-forest has-focus-visible:outline-2 ' + (disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer')}>
+          {label}
+          <input type="file" aria-label={label} accept="image/jpeg,image/png,image/webp" multiple={kind !== 'cover'}
+            disabled={disabled} className="absolute inset-0 w-full cursor-pointer opacity-0"
+            onChange={event => {
+              const files = Array.from(event.target.files ?? [])
+              event.target.value = ''
+              choose(files, kind)
+            }} />
+        </label>
+      })}
+    </div>
+    {progress ? <p role="status" className="mt-4 text-sm text-forest">{progress}</p> : null}
+    {notice ? <p role="status" className="mt-4 text-xs leading-6 text-forest">{notice}</p> : null}
+  </div>
 }
