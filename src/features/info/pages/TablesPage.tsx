@@ -9,5 +9,5 @@ export function Component(){
   if(!query.data)return <DataState loading={query.isFetching} retry={()=>{void query.refetch()}} />
   const {event,role}=query.data
   if(!hasPermission(role,'tables.assign'))return <p role="alert" className="py-12 text-sm text-clay">No tenés permiso para gestionar las mesas de este evento.</p>
-  return <TablesWorkspace event={event} canWrite={hasPermission(role,'tables.write')} canPublish={hasPermission(role,'tables.publish')} />
+  return <TablesWorkspace event={event} canWrite={hasPermission(role,'tables.write')} canPublish={hasPermission(role,'tables.publish')} canExport={hasPermission(role,'guests.read')} />
 }
