@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigation } from 'react-router'
 import { Brand } from '../../components/ui/Brand'
 import { Icon } from '../../components/ui/Icon'
 import { AccountMenu } from '../../features/auth'
+import { InstallPrompt } from '../../components/ui/InstallPrompt'
 
 const navigation = [
   { to: '/', label: 'Inicio', icon: 'home' },
@@ -13,10 +14,11 @@ export function AppLayout() {
   const { state } = useNavigation()
   const { pathname } = useLocation()
 
-  if (pathname === '/iniciar-sesion') return <main className="flex min-h-screen items-center justify-center bg-canvas px-5 py-12"><Outlet /></main>
+  if (pathname === '/iniciar-sesion') return <><InstallPrompt /><main className="flex min-h-screen items-center justify-center bg-canvas px-5 py-12"><Outlet /></main></>
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[230px_minmax(0,1fr)]">
+      <InstallPrompt />
       <a href="#main-content" className="skip-link">Saltar al contenido</a>
       <aside className="border-b border-line bg-paper px-5 py-5 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:border-r lg:border-b-0 lg:px-7 lg:py-9">
         <Brand />
