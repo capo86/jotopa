@@ -1,6 +1,6 @@
 import {z} from 'zod'
 import {requireSupabase} from '../../lib/supabase'
-import {attendanceSummarySchema,seatingListSchema,seatingReportSchema,tableInputSchema,tableSchema} from './models'
+import {attendanceSummarySchema,seatingListSchema,seatingReportSchema,tableInputSchema,tableSchema,guestDrilldownSchema,finalSeatingSchema} from './models'
 import type {AssignmentRow,SeatingFilters} from './models'
 
 export async function listTables(eventId:string,signal:AbortSignal){const {data,error}=await requireSupabase().rpc('list_event_tables',{p_event_id:eventId}).abortSignal(signal);if(error)throw error;return z.array(tableSchema).parse(data)}
@@ -17,3 +17,14 @@ export async function seatingTemplateGuests(eventId:string,filters:SeatingFilter
 }
 export async function importAssignments(eventId:string,rows:AssignmentRow[],batchId:string,preview:boolean){const {data,error}=await requireSupabase().rpc('import_table_assignments',{p_event_id:eventId,p_rows:rows.map(row=>({row_number:row.rowNumber,data:row.data??{}})),p_batch_id:batchId,p_preview:preview});if(error)throw error;return seatingReportSchema.parse(data)}
 export async function attendanceSummary(eventId:string,signal:AbortSignal){const {data,error}=await requireSupabase().rpc('event_attendance_summary',{p_event_id:eventId}).abortSignal(signal);if(error)throw error;return attendanceSummarySchema.parse(data)}
+
+export async function guestDrilldown(eventId:string,metric:string,page:number,signal:AbortSignal){
+  const {data,error}=await requireSupabase().rpc('dashboard_guest_drilldown',{p_event_id:eventId,p_metric:metric,p_page:page}).abortSignal(signal)
+  if(error)throw error
+  return guestDrilldownSchema.parse(data)
+}
+export async function exportFinalSeating(eventId:string){
+  const {data,error}=await requireSupabase().rpc('export_final_seating',{p_event_id:eventId})
+  if(error)throw error
+  return finalSeatingSchema.parse(data)
+}

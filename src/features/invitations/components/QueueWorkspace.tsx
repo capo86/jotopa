@@ -5,6 +5,8 @@ import {fetchQueue,fetchTemplates,manualAction} from '../api'
 import {invitationOperationError} from '../models'
 import {MessageComposer} from './MessageComposer'
 import type {MarkedDelivery} from './MessageComposer'
+import {DeliveryReview} from './DeliveryReview'
+import {FollowupWorkspace} from './FollowupWorkspace'
 
 const buckets={pending:'Pendientes',skipped:'Saltadas',failed:'No se pudo'} as const
 export function QueueWorkspace({eventId,title}:{eventId:string;title:string}){
@@ -30,5 +32,6 @@ export function QueueWorkspace({eventId,title}:{eventId:string;title:string}){
         <div className="min-w-0 rounded-xl border border-line bg-paper p-5"><h2 className="font-display text-2xl text-forest">{buckets[bucket]} <span className="text-clay">· {query.data.total}</span></h2><p className="mt-2 text-xs leading-6 text-muted">Al registrar el intento, la siguiente persona queda lista. No se envía nada automáticamente.</p><ol className="mt-4 divide-y divide-line">{query.data.rows.map(row=><li key={row.guest_id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-4"><div className="min-w-0"><p className="break-words text-sm font-medium text-forest">{row.full_name}</p><p className="mt-1 text-xs text-muted">{row.phone_state==='valid'?'Formato válido para WhatsApp':row.phone_state==='missing'?'Sin teléfono · copiar enlace':'Teléfono inválido'}</p></div><button type="button" className="min-h-11 text-xs text-forest underline" onClick={()=>setSelectedId(row.guest_id)} aria-label={`Revisar invitación de ${row.full_name}`}>Revisar</button>{bucket!=='pending'?<button type="button" className="min-h-11 text-xs text-clay underline" disabled={action.isPending} onClick={()=>action.mutate({guestId:row.guest_id,kind:'retry'})} aria-label={`Retomar a ${row.full_name}`}>Retomar</button>:null}</li>)}</ol><nav aria-label="Paginación de la cola" className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4 text-xs"><span>Página {page+1} de {Math.max(1,Math.ceil(query.data.total/25))}</span><div className="flex gap-3"><button type="button" className="min-h-11 underline" disabled={page===0} onClick={()=>setPage(value=>value-1)}>Anterior</button><button type="button" className="min-h-11 underline" disabled={(page+1)*25>=query.data.total} onClick={()=>setPage(value=>value+1)}>Siguiente</button></div></nav></div>
       </div>}
     </>:null}
+    <DeliveryReview eventId={eventId} /><FollowupWorkspace eventId={eventId} />
   </section>
 }
