@@ -20,5 +20,5 @@ export function InvitationMusic({url}:{url:string}){
     setFailed(false)
     void music.play().catch(()=>setFailed(true))
   }
-  return <div className="iv-music"><audio ref={audio} src={url} loop preload="none" onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onError={()=>setFailed(true)} /><button type="button" onClick={toggle} aria-pressed={playing} aria-label={playing?'Pausar música de fondo':'Reproducir música de fondo'}><span aria-hidden="true">{playing?'❚❚':'♫'}</span> {playing?'Pausar música':'Escuchar música'}</button>{failed?<p role="status">No pudimos reproducir la música.</p>:null}</div>
+  return <div className="iv-music"><audio ref={audio} src={url} loop preload="none" onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onError={()=>setFailed(true)} /><button type="button" onClick={toggle} aria-pressed={playing} aria-label={playing?'Pausar música de fondo':'Reproducir música de fondo'}><span aria-hidden="true">{playing?'❚❚':'♫'}</span></button>{failed?<p role="status">No pudimos reproducir la música.</p>:null}</div>
 }
