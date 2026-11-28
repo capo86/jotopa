@@ -170,14 +170,14 @@ Buckets de Storage: privados, URLs firmadas: `wall-media`, `wall-audio`, `galler
 ## 8. Seguimiento de invitaciones y recordatorios (núcleo)
 
 ### 8.1 Estados y embudo
-Cada invitado recorre: **Invitado → Enviada → Abierta → Respondió (sí/no/quizás)**. El estado "Entregada" solo existe para email; en WhatsApp "Enviada" la marca el anfitrión al tocar el botón. El panel muestra el embudo y permite filtrar por cada etapa, p. ej. "abrieron pero no respondieron".
+Cada invitado recorre: **Invitado → Enviada → Abierta → Respondió (sí/no/quizás)**. El estado "Entregada" solo existe para email; en WhatsApp "Enviada" se registra cuando el anfitrión confirma que tocó Enviar en WhatsApp. El panel muestra el embudo y permite filtrar por cada etapa, p. ej. "abrieron pero no respondieron".
 
 ### 8.2 Canales (todo gratuito)
 - **Link/QR personal**: siempre disponible, base del seguimiento.
 - **WhatsApp — solo botones `wa.me`** (canal principal, decidido: sin API de pago):
   - Cada invitado tiene un botón que abre `https://wa.me/<telefono_E164_sin_+>?text=<mensaje_url_encoded>` con el mensaje de la plantilla y su link personal ya cargados. El anfitrión solo toca "Enviar" dentro de WhatsApp.
   - Normalizar teléfonos a formato internacional (E.164, por defecto prefijo +595 para Paraguay) y validar en la importación; marcar "teléfono inválido" en el panel.
-  - Al tocar el botón, la app registra la invitación como **Enviada** (`sent_marked_by = usuario`). Ofrecer deshacer, porque abrir WhatsApp no garantiza que se envió.
+  - Abrir WhatsApp deja la invitación pendiente. Al regresar, el anfitrión indica si la envió, falló o la deja para más tarde. Solo la confirmación marca **Enviada** (`sent_marked_by = usuario`). Permitir corregir marcas anteriores sin borrar aperturas ni RSVP.
   - **Modo cola** ("Enviar por WhatsApp"): lista ordenada de pendientes con botón por fila; al volver a la app, el siguiente invitado queda listo. Permitir saltar y marcar como "no se pudo".
   - Alternativa para grupos o sin número: botones "Copiar mensaje" y "Compartir" (Web Share API).
   - No existe confirmación de entrega ni lectura en WhatsApp: el seguimiento real es la **apertura del link** y el RSVP.
@@ -195,6 +195,7 @@ Como WhatsApp no se puede enviar solo, los recordatorios funcionan como **cola d
 - Opcional y gratuito: resumen diario por email al anfitrión ("hoy te toca recordar a N invitados") y, si el canal email está activo, envío automático de recordatorios por email.
 - Audiencias típicas: pendientes, "quizás", "abrió y no respondió", "nunca abrió".
 - Reglas de seguridad **obligatorias**: máximo de recordatorios por invitado, horas de silencio sugeridas (no mostrar como "toca hoy" fuera de horario razonable), excluir a `opted_out` y a quienes ya respondieron, y mostrar siempre la cantidad de destinatarios antes de empezar la cola.
+- El recordatorio amable manual por WhatsApp se ofrece una sola vez a quien siga pendiente y haya abierto el enlace o tenga un envío confirmado; requiere consentimiento vigente y respeta la baja. El anfitrión confirma el envío después de hacerlo.
 - El mensaje incluye una forma sencilla de pedir no recibir más recordatorios (p. ej. un botón en la página de invitación que setea `opted_out`).
 - Idempotencia: un job no puede duplicarse (clave única `rule_id + guest_id + due_at`) y, una vez marcado `sent`, desaparece de la cola.
 
@@ -202,7 +203,7 @@ Como WhatsApp no se puede enviar solo, los recordatorios funcionan como **cola d
 - Tarjetas: total invitados, enviadas, abiertas, confirmados (y acompañantes), declinados, pendientes, días para la fecha límite de RSVP.
 - Embudo y gráfico de respuestas en el tiempo.
 - Tabla de invitados con filtros, búsqueda, edición masiva y **línea de tiempo por invitado** (cuándo se envió, abrió, recordó, respondió).
-- Acciones masivas: enviar invitación, enviar recordatorio a un segmento, reenviar a rebotados, exportar a Excel.
+- Acciones masivas: enviar invitación, enviar recordatorio a un segmento, reenviar a rebotados, exportar a Excel. El Excel final de confirmados y mesas se habilita cuando todas las invitaciones respondieron y cada respuesta afirmativa tiene mesa.
 - Alertas: "N invitados sin abrir", "quedan X días y faltan Y respuestas", "teléfonos inválidos".
 - Contenido visible según permisos del rol (p. ej. `content` no ve teléfonos/emails).
 
