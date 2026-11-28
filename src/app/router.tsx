@@ -31,6 +31,7 @@ export const router = createBrowserRouter([
           { path: 'eventos/:eventId/editar', lazy: () => import('../features/events/pages/EditEventPage') },
           { path: 'eventos/:eventId/invitacion', lazy: () => import('../features/invitation-design/pages/DesignPage') },
           { path: 'eventos/:eventId/mesas', lazy: () => import('../features/info/pages/TablesPage') },
+          { path: 'eventos/:eventId/estadisticas/:metric', lazy: () => import('../features/info/pages/AttendanceDetailPage') },
           { path: 'eventos/:eventId/buenos-deseos', lazy: () => import('../features/wall/pages/WallPage') },
           { path: 'eventos/:eventId/equipo', lazy: () => import('../features/members/pages/TeamPage') },
           { path: 'eventos/:eventId/invitados', lazy: () => import('../features/guests/pages/GuestsPage') },
