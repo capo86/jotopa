@@ -30,10 +30,15 @@ export function invitationOperationError(error:unknown):string {
     template_limit:'Podés tener hasta 25 plantillas activas por evento.',template_unavailable:'La plantilla ya no está disponible. Actualizá la lista.',guest_unavailable:'No encontramos a esa persona en este evento.',
     invitation_already_engaged:'Ya hay un envío, apertura o respuesta registrada. Actualizá la cola.',invitation_invalid_phone:'El teléfono no es válido para WhatsApp. Usá la opción de copiar o corregí el teléfono en Invitados.',
     invitation_action_limit:'Alcanzaste el límite de 200 acciones por hora. Intentá más tarde.',invitation_guest_limit:'Esta persona alcanzó el límite de 5 marcas de envío por hora, incluso contando las deshechas.',
-    stale_invitation_action:'La marca ya cambió o pasaron los 10 minutos para deshacerla. Actualizá la lista.',invitation_request_conflict:'No pudimos reutilizar esta operación. Actualizá la cola antes de reintentar.',
+    stale_invitation_action:'La marca ya cambió o esta persona respondió. Actualizá la lista.',invitation_request_conflict:'No pudimos reutilizar esta operación. Actualizá la cola antes de reintentar.',
     message_too_long:'El mensaje personalizado es demasiado largo. Reducí el texto o las repeticiones de variables.',
     clipboard_unavailable:'El navegador no permitió copiar. Revisá los permisos de portapapeles; no se marcó como enviado.',popup_blocked:'El navegador bloqueó la pestaña. Habilitá ventanas emergentes para abrir WhatsApp.',
     popup_closed:'La pestaña se cerró antes de abrir WhatsApp. Revisá el intento y su marca manual.',
   }
   return typeof message==='string' && messages[message] ? messages[message] : 'No pudimos completar la operación. Revisá tu conexión e intentá de nuevo.'
 }
+
+export const deliveryReviewSchema=z.object({total:z.number().int(),rows:z.array(z.object({guest_id:z.uuid(),full_name:z.string(),sent_at:z.string(),delivery_confirmed_at:z.string().nullable()}))})
+export const followupCandidatesSchema=z.object({available:z.boolean(),total:z.number().int(),deadline:z.string(),timezone:z.string(),rows:z.array(z.object({guest_id:z.uuid(),full_name:z.string(),party_size:z.number().int(),phone:z.string().nullable(),phone_state:z.enum(['valid','missing','invalid'])}))})
+export const followupPayloadSchema=z.object({guest_id:z.uuid(),full_name:z.string(),phone:z.string().nullable(),party_size:z.number().int(),token:z.string().regex(/^[a-f0-9]{64}$/),deadline:z.string(),timezone:z.string()})
+export type FollowupPayload=z.infer<typeof followupPayloadSchema>

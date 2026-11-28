@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import {useMutation,useQuery} from '@tanstack/react-query'
 import {appUrl} from '../../../lib/env'
-import {manualAction,prepareMessage} from '../api'
+import {manualAction,prepareMessage,confirmManualSend} from '../api'
 import type {ActionRequest} from '../api'
 import {invitationOperationError} from '../models'
 import type {QueueGuest} from '../models'
@@ -49,7 +49,7 @@ export function MessageComposer({eventId,guest,templateId,onChanged,onMarked,onN
     setWorking(true);onNotice('')
     const requestId=crypto.randomUUID()
     try{
-      await mutation.mutateAsync({action:'send',requestId})
+      await confirmManualSend(eventId,guest.guest_id,requestId,templateId)
       setAwaiting(false)
       onMarked({guestId:guest.guest_id,name:guest.full_name,requestId})
       onNotice('Envío confirmado por vos. Jotopa registrará la apertura cuando la persona visite su enlace.')

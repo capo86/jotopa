@@ -1,5 +1,5 @@
 import {requireSupabase} from '../../lib/supabase'
-import {actionSchema,historySchema,messagePayloadSchema,queueSchema,templatesSchema,trackingSchema,templateSchema} from './models'
+import {actionSchema,historySchema,messagePayloadSchema,queueSchema,templatesSchema,trackingSchema,templateSchema,deliveryReviewSchema,followupCandidatesSchema,followupPayloadSchema} from './models'
 import type {ManualAction} from './models'
 
 export async function fetchTemplates(eventId:string,signal:AbortSignal){
@@ -32,3 +32,32 @@ export async function manualAction(eventId:string,guestId:string,request:ActionR
 }
 export async function fetchTracking(eventId:string,guestIds:string[],signal:AbortSignal){const {data,error}=await requireSupabase().rpc('get_guest_invitation_tracking',{p_event_id:eventId,p_guest_ids:guestIds}).abortSignal(signal);if(error) throw error;return trackingSchema.parse(data)}
 export async function fetchHistory(eventId:string,guestId:string,page:number,signal:AbortSignal){const {data,error}=await requireSupabase().rpc('get_guest_invitation_history',{p_event_id:eventId,p_guest_id:guestId,p_page:page}).abortSignal(signal);if(error) throw error;return historySchema.parse(data)}
+
+export async function confirmManualSend(eventId:string,guestId:string,requestId:string,templateId:string){
+  const {data,error}=await requireSupabase().rpc('confirm_manual_invitation_sent',{p_event_id:eventId,p_guest_id:guestId,p_request_id:requestId,p_template_id:templateId})
+  if(error)throw error
+  return actionSchema.parse(data)
+}
+export async function fetchDeliveryReview(eventId:string,page:number,signal:AbortSignal){
+  const {data,error}=await requireSupabase().rpc('list_delivery_review',{p_event_id:eventId,p_page:page}).abortSignal(signal)
+  if(error)throw error
+  return deliveryReviewSchema.parse(data)
+}
+export async function correctDelivery(eventId:string,guestId:string){
+  const {error}=await requireSupabase().rpc('correct_manual_delivery',{p_event_id:eventId,p_guest_id:guestId,p_request_id:crypto.randomUUID()})
+  if(error)throw error
+}
+export async function fetchFollowupCandidates(eventId:string,page:number,signal:AbortSignal){
+  const {data,error}=await requireSupabase().rpc('list_rsvp_followup_candidates',{p_event_id:eventId,p_page:page}).abortSignal(signal)
+  if(error)throw error
+  return followupCandidatesSchema.parse(data)
+}
+export async function prepareFollowup(eventId:string,guestId:string){
+  const {data,error}=await requireSupabase().rpc('prepare_rsvp_followup',{p_event_id:eventId,p_guest_id:guestId})
+  if(error)throw error
+  return followupPayloadSchema.parse(data)
+}
+export async function recordFollowup(eventId:string,guestId:string,requestId:string){
+  const {error}=await requireSupabase().rpc('record_rsvp_followup',{p_event_id:eventId,p_guest_id:guestId,p_request_id:requestId})
+  if(error)throw error
+}

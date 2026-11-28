@@ -573,6 +573,7 @@ export type Database = {
           channel: Database["public"]["Enums"]["invitation_channel"]
           created_at: string
           delivered_at: string | null
+          delivery_confirmed_at: string | null
           error: string | null
           event_id: string
           first_opened_at: string | null
@@ -593,6 +594,7 @@ export type Database = {
           channel: Database["public"]["Enums"]["invitation_channel"]
           created_at?: string
           delivered_at?: string | null
+          delivery_confirmed_at?: string | null
           error?: string | null
           event_id: string
           first_opened_at?: string | null
@@ -613,6 +615,7 @@ export type Database = {
           channel?: Database["public"]["Enums"]["invitation_channel"]
           created_at?: string
           delivered_at?: string | null
+          delivery_confirmed_at?: string | null
           error?: string | null
           event_id?: string
           first_opened_at?: string | null
@@ -976,6 +979,19 @@ export type Database = {
         Args: { p_event_id: string; p_visible: boolean }
         Returns: undefined
       }
+      confirm_manual_invitation_sent: {
+        Args: {
+          p_event_id: string
+          p_guest_id: string
+          p_request_id: string
+          p_template_id: string
+        }
+        Returns: Json
+      }
+      correct_manual_delivery: {
+        Args: { p_event_id: string; p_guest_id: string; p_request_id: string }
+        Returns: undefined
+      }
       create_event: {
         Args: {
           p_rsvp_deadline?: string
@@ -998,6 +1014,10 @@ export type Database = {
           token: string
         }[]
       }
+      dashboard_guest_drilldown: {
+        Args: { p_event_id: string; p_metric: string; p_page?: number }
+        Returns: Json
+      }
       delete_event: { Args: { p_event_id: string }; Returns: undefined }
       delete_event_table: {
         Args: { p_event_id: string; p_table_id: string }
@@ -1013,6 +1033,7 @@ export type Database = {
         Args: { p_role: Database["public"]["Enums"]["event_role"] }
         Returns: string[]
       }
+      export_final_seating: { Args: { p_event_id: string }; Returns: Json }
       export_guests: {
         Args: {
           p_contact?: string
@@ -1081,6 +1102,10 @@ export type Database = {
         Args: { p_event_id: string; p_expires_at?: string }
         Returns: Json
       }
+      list_delivery_review: {
+        Args: { p_event_id: string; p_page?: number }
+        Returns: Json
+      }
       list_event_tables: { Args: { p_event_id: string }; Returns: Json }
       list_event_team: {
         Args: { p_event_id: string }
@@ -1104,6 +1129,10 @@ export type Database = {
       }
       list_invitation_queue: {
         Args: { p_bucket?: string; p_event_id: string; p_page?: number }
+        Returns: Json
+      }
+      list_rsvp_followup_candidates: {
+        Args: { p_event_id: string; p_page?: number }
         Returns: Json
       }
       list_seating_guests: {
@@ -1140,6 +1169,10 @@ export type Database = {
         Args: { p_event_id: string; p_guest_id: string; p_template_id: string }
         Returns: Json
       }
+      prepare_rsvp_followup: {
+        Args: { p_event_id: string; p_guest_id: string }
+        Returns: Json
+      }
       preview_event_member_invite: {
         Args: { p_token: string }
         Returns: {
@@ -1155,6 +1188,10 @@ export type Database = {
       public_invitation: { Args: { p_slug: string }; Returns: Json }
       publish_invitation_design: {
         Args: { p_event_id: string; p_expected_revision: number }
+        Returns: undefined
+      }
+      record_rsvp_followup: {
+        Args: { p_event_id: string; p_guest_id: string; p_request_id: string }
         Returns: undefined
       }
       remove_event_member: {
