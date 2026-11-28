@@ -100,8 +100,8 @@
 .iv .iv-personal-entry{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:48px;margin-top:24px;padding:12px 22px;border:1px solid var(--iv-ink);border-radius:999px;color:var(--iv-ink);font-size:.8rem;text-decoration:none}
 .iv .iv-personal-entry:hover{background:var(--iv-ink);color:var(--iv-paper)}
 .iv .iv-personal-entry:focus-visible{outline:2px solid var(--iv-accent);outline-offset:4px}
-.iv .iv-music{position:fixed;right:16px;bottom:16px;z-index:40;max-width:calc(100vw - 32px)}
-.iv .iv-music button{display:flex;align-items:center;gap:9px;border:1px solid var(--iv-ink);border-radius:999px;background:var(--iv-paper);color:var(--iv-ink);padding:10px 16px;font-size:.72rem;box-shadow:0 4px 18px #0002}
+.iv .iv-music{position:fixed;right:16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:40}
+.iv .iv-music button{display:grid;place-items:center;width:48px;height:48px;min-height:48px;padding:0;border:1px solid var(--iv-ink);border-radius:50%;background:var(--iv-paper);color:var(--iv-ink);box-shadow:0 4px 18px #0002;cursor:pointer}
 .iv .iv-music button span{font-size:1rem}.iv .iv-music p{margin-top:6px;background:var(--iv-paper);padding:7px 10px;font-size:.7rem}
 .iv .iv-details{border-block:1px solid color-mix(in srgb,var(--iv-ink) 20%,transparent);max-width:1100px;margin:auto}
 .iv .iv-details h2{margin-top:20px}
@@ -345,3 +345,8 @@
 }
 .iv .iv-details .iv-kicker{color:color-mix(in srgb,var(--iv-accent) 62%,var(--iv-ink))}
 .iv .iv-details .iv-prose{max-width:550px;margin-top:26px;line-height:1.9}
+.iv .iv-floating-rsvp{position:fixed;left:16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:40;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;max-width:calc(100vw - 96px);padding:0 18px;border:1px solid var(--iv-ink);border-radius:999px;background:var(--iv-ink);color:var(--iv-paper);font-size:.72rem;font-weight:700;letter-spacing:.01em;text-decoration:none;box-shadow:0 4px 18px #0003}
+.iv .iv-floating-rsvp>span:first-child{font-size:1rem;line-height:1}
+.iv .iv-floating-rsvp:hover{background:color-mix(in srgb,var(--iv-ink) 83%,var(--iv-accent))}
+.iv .iv-floating-rsvp:focus-visible,.iv .iv-music button:focus-visible{outline:2px solid var(--iv-accent);outline-offset:4px}
+@media(max-width:370px){.iv .iv-floating-rsvp{padding-inline:13px;font-size:.68rem}}
