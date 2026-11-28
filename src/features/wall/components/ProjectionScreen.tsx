@@ -16,7 +16,7 @@ import '../projection.css'
 export function ProjectionScreen({slug,credential,initialQr,initialOptions}:{slug:string;credential:string;initialQr:boolean;initialOptions:ProjectionOptions}){
   const access=useMemo<WallAccess>(()=>({kind:'projection',slug,access:credential}),[slug,credential]),query=useWallFeed(access,'projected-wall'),feed=query.data,online=useOnlineStatus()
   const shell=useRef<HTMLElement>(null),viewport=useRef<HTMLDivElement>(null)
-  const [auto,setAuto]=useState(()=>!window.matchMedia('(prefers-reduced-motion: reduce)').matches),[speed,setSpeed]=useState(28),[showQr,setShowQr]=useState(initialQr),[playingPost,setPlayingPost]=useState<string|null>(null),[fullscreenError,setFullscreenError]=useState(false),[options,setOptions]=useState(initialOptions),[presentation,setPresentation]=useState(initialOptions.presentation),[audioHint,setAudioHint]=useState('''),[shareNotice,setShareNotice]=useState('')
+  const [auto,setAuto]=useState(()=>!window.matchMedia('(prefers-reduced-motion: reduce)').matches),[speed,setSpeed]=useState(28),[showQr,setShowQr]=useState(initialQr),[playingPost,setPlayingPost]=useState<string|null>(null),[fullscreenError,setFullscreenError]=useState(false),[options,setOptions]=useState(initialOptions),[presentation,setPresentation]=useState(initialOptions.presentation),[audioHint,setAudioHint]=useState(''),[shareNotice,setShareNotice]=useState('')
   const audioPlaying=Boolean(playingPost&&feed?.posts.some(post=>post.id===playingPost))
   const phase=useConversationScroll(viewport,Boolean(feed?.posts.length)&&auto&&!audioPlaying&&!query.unavailable,speed)
   useEffect(()=>{
