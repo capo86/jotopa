@@ -12,23 +12,24 @@ function rememberDismissal(){
   try{window.localStorage.setItem(storageKey,String(Date.now()+snooze))}catch{/* Private browsing can block storage. */}
 }
 export function InstallPrompt(){
-  const [platform,setPlatform]=useState<MobilePlatform|null>(null)
+  const [platform]=useState<MobilePlatform|null>(()=>{
+    const standalone=window.matchMedia('(display-mode: standalone)').matches||(navigator as Navigator & {standalone?:boolean}).standalone===true
+    if(standalone||dismissedUntil()>Date.now())return null
+    const agent=navigator.userAgent
+    return /iPhone|iPad|iPod/i.test(agent)?'ios':/Android/i.test(agent)?'android':null
+  })
   const [installEvent,setInstallEvent]=useState<InstallEvent|null>(null)
   const [visible,setVisible]=useState(false)
   const [instructions,setInstructions]=useState(false)
   useEffect(()=>{
-    const standalone=window.matchMedia('(display-mode: standalone)').matches||(navigator as Navigator & {standalone?:boolean}).standalone===true
-    const agent=navigator.userAgent
-    const mobile:MobilePlatform|null=/iPhone|iPad|iPod/i.test(agent)?'ios':/Android/i.test(agent)?'android':null
-    if(standalone||!mobile||dismissedUntil()>Date.now())return
-    setPlatform(mobile)
+    if(!platform)return
     const timer=window.setTimeout(()=>setVisible(true),1200)
     const beforeInstall=(event:Event)=>{event.preventDefault();setInstallEvent(event as InstallEvent)}
     const installed=()=>{setVisible(false);setInstallEvent(null);rememberDismissal()}
     window.addEventListener('beforeinstallprompt',beforeInstall)
     window.addEventListener('appinstalled',installed)
     return()=>{window.clearTimeout(timer);window.removeEventListener('beforeinstallprompt',beforeInstall);window.removeEventListener('appinstalled',installed)}
-  },[])
+  },[platform])
   const dismiss=()=>{rememberDismissal();setVisible(false)}
   const install=async()=>{
     if(!installEvent){setInstructions(true);return}
