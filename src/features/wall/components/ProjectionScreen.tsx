@@ -9,13 +9,14 @@ import {useOnlineStatus} from '../hooks/useOnlineStatus'
 import {LiveWallPost} from './LiveWallPost'
 import {ParticipationQr} from './ParticipationQr'
 import {ProjectionToolbar} from './ProjectionToolbar'
+import {shareWallScreen} from '../share'
 import '../wall.css'
 import '../projection.css'
 
 export function ProjectionScreen({slug,credential,initialQr,initialOptions}:{slug:string;credential:string;initialQr:boolean;initialOptions:ProjectionOptions}){
   const access=useMemo<WallAccess>(()=>({kind:'projection',slug,access:credential}),[slug,credential]),query=useWallFeed(access,'projected-wall'),feed=query.data,online=useOnlineStatus()
   const shell=useRef<HTMLElement>(null),viewport=useRef<HTMLDivElement>(null)
-  const [auto,setAuto]=useState(()=>!window.matchMedia('(prefers-reduced-motion: reduce)').matches),[speed,setSpeed]=useState(28),[showQr,setShowQr]=useState(initialQr),[playingPost,setPlayingPost]=useState<string|null>(null),[fullscreenError,setFullscreenError]=useState(false),[options,setOptions]=useState(initialOptions),[presentation,setPresentation]=useState(initialOptions.presentation),[audioHint,setAudioHint]=useState('')
+  const [auto,setAuto]=useState(()=>!window.matchMedia('(prefers-reduced-motion: reduce)').matches),[speed,setSpeed]=useState(28),[showQr,setShowQr]=useState(initialQr),[playingPost,setPlayingPost]=useState<string|null>(null),[fullscreenError,setFullscreenError]=useState(false),[options,setOptions]=useState(initialOptions),[presentation,setPresentation]=useState(initialOptions.presentation),[audioHint,setAudioHint]=useState('''),[shareNotice,setShareNotice]=useState('')
   const audioPlaying=Boolean(playingPost&&feed?.posts.some(post=>post.id===playingPost))
   const phase=useConversationScroll(viewport,Boolean(feed?.posts.length)&&auto&&!audioPlaying&&!query.unavailable,speed)
   useEffect(()=>{
@@ -38,6 +39,7 @@ export function ProjectionScreen({slug,credential,initialQr,initialOptions}:{slu
   if(query.unavailable)return <main className="wp-shell"><div className="wp-error"><p className="wp-kicker">JOTOPA · BUENOS DESEOS</p><h1>Este encuentro<br />ya no está en pantalla.</h1><p>El enlace venció, fue revocado o el período de acceso terminó. Pedile un enlace nuevo a quien organiza.</p></div></main>
   if(!feed?.event)return <main className="wp-shell"><div className="wp-error"><p className="wp-kicker">JOTOPA · BUENOS DESEOS</p><h1>{query.isError?'No pudimos abrir la pantalla.':'Preparando los recuerdos…'}</h1><p>{query.isError?'Revisá la conexión y el enlace de proyección.':'Un encuentro, muchas voces.'}</p>{query.isError?<button type="button" onClick={()=>{void query.refetch()}}>Volver a intentar</button>:null}</div></main>
   const event=feed.event,participation=new URL('/e/'+event.slug+'/participar',appUrl).href
+  async function shareScreen(){try{const result=await shareWallScreen(window.location.href,event.title);setShareNotice(result==='shared'?'Opciones para compartir abiertas.':result==='copied'?'Enlace público copiado.':'')}catch{setShareNotice('No pudimos compartir el enlace desde este navegador.')}}
   const date=new Intl.DateTimeFormat('es-PY',{day:'numeric',month:'long',year:'numeric',timeZone:event.timezone}).format(new Date(event.starts_at))
   const connected=online&&query.connection==='live'&&!query.isError
   const status=!online?'Sin conexión · historial conservado':connected?'En vivo':'Reconectando · reconciliación periódica'
@@ -48,11 +50,11 @@ export function ProjectionScreen({slug,credential,initialQr,initialOptions}:{slu
         <div ref={viewport} className="wp-history" tabIndex={0} aria-label="Historial completo de buenos deseos" onPointerDown={event=>{if(!(event.target instanceof Element)||!event.target.closest('audio'))setAuto(false)}} onWheel={()=>setAuto(false)} onTouchStart={()=>setAuto(false)} onKeyDown={event=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(event.key))setAuto(false)}} onPlayCapture={event=>mediaPlaying(event.target)} onPauseCapture={mediaPaused} onEndedCapture={mediaPaused}>
           <p className="wp-history-start">Un espacio para celebrar juntos.</p>{feed.posts.length?feed.posts.map(post=><LiveWallPost key={post.id} post={post} access={access} scope="projected-wall" timezone={event.timezone} releaseOffscreen />):<div className="wp-no-messages"><span className="wp-empty-identity" aria-hidden="true">{eventInitials(event.title)}</span><h2>Los primeros recuerdos<br />están por llegar.</h2><p>{showQr?'Escaneá el QR y abrí tu invitación personal para compartir tus buenos deseos.':'Compartí tus buenos deseos desde el enlace personal de tu invitación.'}</p></div>}{feed.syncing?<p className="wp-history-start" role="status">Cargando el historial completo…</p>:null}
         </div>
-        {!presentation?<ProjectionToolbar auto={auto} speed={speed} showQr={showQr} audioPlaying={audioPlaying} options={options} onOptions={setOptions} onAuto={()=>setAuto(value=>!value)} onSpeed={setSpeed} onLatest={()=>{setAuto(false);viewport.current?.scrollTo({top:viewport.current.scrollHeight,behavior:'instant'})}} onFullscreen={()=>{void fullscreen()}} onQr={()=>setShowQr(value=>!value)} onPresent={()=>setPresentation(true)} onAudio={()=>{void activateAudio()}} onStopAudio={stopAudio} />:null}
+        {!presentation?<ProjectionToolbar auto={auto} speed={speed} showQr={showQr} audioPlaying={audioPlaying} options={options} onOptions={setOptions} onAuto={()=>setAuto(value=>!value)} onSpeed={setSpeed} onLatest={()=>{setAuto(false);viewport.current?.scrollTo({top:viewport.current.scrollHeight,behavior:'instant'})}} onFullscreen={()=>{void fullscreen()}} onQr={()=>setShowQr(value=>!value)} onPresent={()=>setPresentation(true)} onShare={()=>{void shareScreen()}} onAudio={()=>{void activateAudio()}} onStopAudio={stopAudio} />:null}
       </section>
       <aside className="wp-side"><div><p className="wp-kicker">EL ENCUENTRO ES CON VOS</p><p className="wp-event-title" aria-hidden="true">{event.title}</p><p className="wp-date">{date}</p></div>{showQr?<ParticipationQr url={participation} />:<div className="wp-side-ornament" aria-hidden="true">✳</div>}<div className="wp-signature"><span>jotopa<i>.</i></span><p>Las palabras también abrazan.</p></div></aside>
     </div>
     {presentation?<button type="button" className="wp-operator-toggle" onClick={()=>setPresentation(false)} aria-label="Mostrar controles de pantalla">Controles <span aria-hidden="true">· M</span></button>:null}
-    <p className={'wp-screen-note'+(presentation?' wp-presentation-note':'')} role="status">{motion}{fullscreenError?' El navegador no permitió pantalla completa.':null}{!online?' Sin conexión. Los recuerdos cargados permanecen visibles hasta revalidar el acceso.':query.isError?' Se interrumpió la conexión; estamos intentando actualizar.':null}{audioHint?' '+audioHint:null}</p>
+    <p className={'wp-screen-note'+(presentation?' wp-presentation-note':'')} role="status">{motion}{fullscreenError?' El navegador no permitió pantalla completa.':null}{!online?' Sin conexión. Los recuerdos cargados permanecen visibles hasta revalidar el acceso.':query.isError?' Se interrumpió la conexión; estamos intentando actualizar.':null}{audioHint?' '+audioHint:null}{shareNotice?' '+shareNotice:null}</p>
   </main>
 }

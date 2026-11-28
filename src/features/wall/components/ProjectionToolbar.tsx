@@ -1,7 +1,7 @@
 import type {ProjectionOptions} from '../presentation-models'
 import {ProjectionAppearanceFields} from './ProjectionAppearanceFields'
 
-type Props={auto:boolean;speed:number;showQr:boolean;audioPlaying:boolean;options:ProjectionOptions;onOptions:(value:ProjectionOptions)=>void;onAuto:()=>void;onSpeed:(speed:number)=>void;onLatest:()=>void;onFullscreen:()=>void;onQr:()=>void;onPresent:()=>void;onAudio:()=>void;onStopAudio:()=>void}
+type Props={auto:boolean;speed:number;showQr:boolean;audioPlaying:boolean;options:ProjectionOptions;onOptions:(value:ProjectionOptions)=>void;onAuto:()=>void;onSpeed:(speed:number)=>void;onLatest:()=>void;onFullscreen:()=>void;onQr:()=>void;onPresent:()=>void;onShare:()=>void;onAudio:()=>void;onStopAudio:()=>void}
 export function ProjectionToolbar(props:Props){
   return <footer className="wp-controls" aria-label="Controles de la pantalla">
     <button type="button" aria-pressed={props.auto} onClick={props.onAuto}>{props.auto?'Pausar recorrido':'Iniciar recorrido automático'}</button>
@@ -10,7 +10,7 @@ export function ProjectionToolbar(props:Props){
     <button type="button" onClick={props.audioPlaying?props.onStopAudio:props.onAudio}>{props.audioPlaying?'Detener nota de voz':'Activar audio'}</button>
     <button type="button" onClick={props.onFullscreen}>Pantalla completa</button>
     <button type="button" aria-pressed={props.showQr} onClick={props.onQr}>{props.showQr?'Ocultar QR':'Mostrar QR'}</button>
-    <button type="button" onClick={props.onPresent}>Modo presentación</button>
+    <button type="button" onClick={props.onShare}>Compartir pantalla</button><button type="button" onClick={props.onPresent}>Modo presentación</button>
     <details className="wp-appearance"><summary>Apariencia</summary><ProjectionAppearanceFields value={props.options} onChange={props.onOptions} includeMode={false} /></details>
   </footer>
 }
